@@ -469,7 +469,7 @@ export default {
     // world-space light rides the same diagonal, top-left to bottom-right
     const lp = A.lerp(-0.35, 1.6, A.ease(t, T.show, T.show + 0.75, E.inOutSine));
     this.sweepLight.position.set(A.lerp(-7, 7, A.clamp(lp)), A.lerp(8, -8, A.clamp(lp)), 6.5);
-    this.sweepLight.intensity = 9 * swOn;
+    this.sweepLight.intensity = 6 * swOn;
 
     this.dust.update(t);
 

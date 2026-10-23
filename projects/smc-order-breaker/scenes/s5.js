@@ -23,8 +23,8 @@ const ARROW_FROM = [-5.0, -3.35, 1.15], ARROW_TO = [4.1, -0.88, 1.15];
 
 // screen layout (px, before the push zoom)
 const L = {
-  chipA: { x: 540, y: 862, h: 110 },
-  chipB: { x: 540, y: 988, h: 110 },
+  chipA: { x: 540, y: 866, h: 98 },
+  chipB: { x: 540, y: 980, h: 98 },
   mastery: { x: 540, y: 458, h: 172 },
   crown: { x: 540, y: 292, h: 100 },
   better: { x: 358, y: 704, h: 72 },
@@ -164,10 +164,10 @@ export default {
     this.slamRings = [mkRing(PAL.gold), mkRing(PAL.goldDeep)];
     this.finalRings = [mkRing(PAL.green), mkRing(PAL.gold)];
     this.wordRings = [mkRing(PAL.green), mkRing(PAL.green), mkRing(PAL.green)];
-    this.slamSparks = kit.sparks({ count: 110, color: PAL.gold, size: 0.5, speed: 13, life: 1.15, seed: 51 });
-    this.slamSparks2 = kit.sparks({ count: 40, color: '#ffd04a', size: 0.36, speed: 7, life: 0.9, seed: 52 });
+    this.slamSparks = kit.sparks({ count: 110, color: PAL.gold, size: 0.5, speed: 20, life: 1.15, seed: 51 });
+    this.slamSparks2 = kit.sparks({ count: 40, color: '#ffd04a', size: 0.36, speed: 11, life: 0.9, seed: 52 });
     this.finalSparksG = kit.sparks({ count: 70, color: PAL.green, size: 0.42, speed: 11, life: 1.1, seed: 53 });
-    this.finalSparksY = kit.sparks({ count: 80, color: PAL.gold, size: 0.42, speed: 12, life: 1.2, seed: 54 });
+    this.finalSparksY = kit.sparks({ count: 80, color: PAL.gold, size: 0.42, speed: 17, life: 1.2, seed: 54 });
     this.tipSparks = kit.sparks({ count: 36, color: PAL.green, size: 0.34, speed: 6, life: 0.8, seed: 55, spread: Math.PI * 1.2, dir: Math.PI / 4 });
     for (const s of [this.slamSparks, this.slamSparks2, this.finalSparksG, this.finalSparksY, this.tipSparks]) group.add(s.group);
 
@@ -315,9 +315,9 @@ export default {
         r.scale.set(s, s * 0.55, 1);
         r.material.opacity = 0.75 * (1 - rp) ** 1.5;
       });
-      this.slamSparks.update(t, T.slam, [mp.x, mp.y, mp.z + 0.4]);
-      this.slamSparks2.update(t, T.slam + 0.04, [mp.x, mp.y + 0.3, mp.z + 0.6]);
-      this.finalSparksY.update(t, T.final, [mp.x, mp.y, mp.z + 0.5]);
+      this.slamSparks.update(t, T.slam, [mp.x, mp.y, mp.z + 2.4]);
+      this.slamSparks2.update(t, T.slam + 0.04, [mp.x, mp.y + 0.3, mp.z + 2.6]);
+      this.finalSparksY.update(t, T.final, [mp.x, mp.y, mp.z + 2.4]);
       this.glints.forEach(({ s, t0 }) => {
         const g = A.pulse(t, t0 + 0.14, 0.28);
         s.visible = g > 0.001;
@@ -359,10 +359,10 @@ export default {
       let bump = 0;
       for (const tl of [T.better, T.trading, T.decisions]) if (tl > tin && t >= tl) bump += 7 * A.hit(t, tl, 0.12);
       const pos = this.pinAt(ctx, w.outer, lay.x, lay.y - bump, w.h, w.tx.capH, { z: 0.65, seed });
-      w.inner.position.set(-0.6 * (1 - e), 0.9 * (1 - e), 3.5 * (1 - e));
+      w.inner.position.set(0.5 * (1 - e), -0.15 * (1 - e), 3 * (1 - e));
       for (const c of w.tx.chars) c.mesh.castShadow = e > 0.75;
       w.inner.rotation.set(THREE.MathUtils.degToRad(-25 * (1 - e)), 0, 0);
-      const s = A.lerp(1.45, 1, e) * (1 + 0.04 * finalK);
+      const s = A.lerp(1.3, 1, e) * (1 + 0.04 * finalK);
       w.inner.scale.set(s * (1 + sq), s * (1 - sq), s);
       kitOpacity(w.tx.group, E.outCubic(A.prog(t, tin - 0.16, tin - 0.06)));
       // a bright flash wave through the letters on landing
@@ -409,7 +409,7 @@ export default {
       r.scale.set(s, s * 0.7, 1);
       r.material.opacity = 0.45 * (1 - rp) ** 2;
     });
-    this.finalSparksG.update(t, T.final, badgePos ? [badgePos.x, badgePos.y, badgePos.z + 0.5] : [0, 0, 0]);
+    this.finalSparksG.update(t, T.final, badgePos ? [badgePos.x, badgePos.y, badgePos.z + 1.6] : [0, 0, 0]);
 
     // ---------------------------------------------------------- candles
     const wave = A.lerp(-1.5, N_CANDLES + 1.5, A.prog(t, T.final, T.final + 0.6));

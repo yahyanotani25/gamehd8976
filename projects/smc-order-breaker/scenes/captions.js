@@ -269,8 +269,11 @@ export default {
         const R = ROLE[c.roles[j]];
         // text turns to its "on block" colour as the block arrives (the
         // first word of a chunk pops in together with its block)
+        // and the previous word hands its "on block" colour back as it leaves
+        const mv = E.outExpo(A.prog(t, c.g[a].start - LEAD, c.g[a].start - LEAD + 0.13));
         let k = 0;
-        if (j === a) k = j === 0 ? 1 : E.outExpo(A.prog(t, st, st + 0.13));
+        if (j === a) k = j === 0 ? 1 : mv;
+        else if (j === a - 1) k = 1 - mv;
         if (k >= 0.999) s.style.color = R.on;
         else if (k <= 0.001) s.style.color = R.text;
         else {
