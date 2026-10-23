@@ -168,7 +168,8 @@ export default {
       flt.add(chartG);
       const ch = kit.chart({ data, x0: 0.5, step: 1 });
       chartG.add(ch.group);
-      const zone = kit.zone({ ...zd, color: PAL.zoneGreen });
+      const zone = kit.zone({ ...zd, color: PAL.zoneGreen, fill: 0.34 });
+      zone.hatchMat.opacity = 0.34;
       chartG.add(zone.group);
       const arrow = isTop
         ? kit.arrow([8.25, 3.9], [9.95, 7.5], { color: PAL.green, radius: 0.13, head: 0.75 })
@@ -418,6 +419,10 @@ export default {
       const colr = fl < 0.5 ? g.clone().lerp(grey, drain) : grey.clone().lerp(r, A.prog(fl, 0.5, 0.8));
       c.zone.setColor(colr);
       c.zone.group.position.x = BB_ZONE.x0 + 0.12 * Math.sin(t * 90) * crack;
+      // lift the slab while it flips so it never sinks into the card, and
+      // keep the flipped (upside-down) slab above the card surface
+      const zh = (BB_ZONE.y1 - BB_ZONE.y0) / 2;
+      c.zone.group.position.z = (zh + 0.1) * Math.sin(Math.PI * fl) + 0.24 * fl;
       c.zone.pulse(Math.min(1, 0.8 * crack + A.hit(t, 22.98, 0.35) + 0.6 * A.hit(t, T.reversal, 0.4) + 0.25 * A.window(t, 24.0, 24.7, 0.2, 0.3)));
       c.arrow.setDraw(A.ease(t, T.reversal + 0.02, T.reversal + 0.42, E.outCubic));
       const tp = A.prog(t, 22.98, 23.45);
@@ -459,12 +464,12 @@ export default {
     for (const it of this.sweepItems) {
       const d = (it.u - sw) / 0.11;
       const b = swOn * Math.exp(-d * d);
-      for (const m of it.mats) m.emissiveIntensity = it.base + 0.75 * b;
+      for (const m of it.mats) m.emissiveIntensity = it.base + 1.05 * b;
     }
     // world-space light rides the same diagonal, top-left to bottom-right
     const lp = A.lerp(-0.35, 1.6, A.ease(t, T.show, T.show + 0.75, E.inOutSine));
-    this.sweepLight.position.set(A.lerp(-7, 7, A.clamp(lp)), A.lerp(8, -8, A.clamp(lp)), 4.5);
-    this.sweepLight.intensity = 26 * swOn;
+    this.sweepLight.position.set(A.lerp(-7, 7, A.clamp(lp)), A.lerp(8, -8, A.clamp(lp)), 6.5);
+    this.sweepLight.intensity = 9 * swOn;
 
     this.dust.update(t);
 

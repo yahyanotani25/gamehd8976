@@ -10,7 +10,7 @@ import { CANDLES, ZONE, ZONE_X1_S2, ZONE_X1_S3, X } from './story-data.js';
 
 const NC = 15; // candles 0–14 belong to this scene
 // the bank sits ON the zone, right of the impulse (clear of candles 5-7)
-const BANK = { x: 10.5, y: 5.36, z: 0.35, size: 1.6 };
+const BANK = { x: 10.0, y: 5.47, z: 0.35, size: 1.8 };
 const ENTRY_AT = [8.9, 3.65, 0.45];
 const TAP = [11.5, 4.05];
 // reaction arrow runs up the empty space left of candles 12-14
@@ -193,10 +193,10 @@ export default {
     group.add(this.reactPool);
 
     // ---------------------------------------------------------- reaction arrow
-    this.arrow = kit.arrow(ARROW_FROM, ARROW_TO, { color: PAL.green, radius: 0.095, head: 0.6 });
+    this.arrow = kit.arrow(ARROW_FROM, ARROW_TO, { color: PAL.green, radius: 0.12, head: 0.7 });
     group.add(this.arrow.group);
     const L = Math.hypot(ARROW_TO[0] - ARROW_FROM[0], ARROW_TO[1] - ARROW_FROM[1]);
-    this.arrowShaft = Math.max(0.05, 1 - (0.6 * 0.6) / L);
+    this.arrowShaft = Math.max(0.05, 1 - (0.7 * 0.6) / L);
     this.arrowGlow = kit.glow({ color: PAL.green, size: 1.8, opacity: 0.55 });
     group.add(this.arrowGlow);
 
@@ -223,9 +223,10 @@ export default {
     // ---------------------------------------------------------- DOM labels
     ov.css(`
       .s2-pill { font-size: 34px; padding: 15px 26px 13px; gap: 11px; }
+      .s2-pill.s2-inst { font-size: 31px; padding: 14px 23px 12px; gap: 10px; }
       .s2-pill.s2-bos { font-size: 30px; padding: 12px 20px 10px; gap: 9px; letter-spacing: 0.08em; }
     `);
-    this.pInst = ov.el(dom, { cls: 'pill navy s2-pill', html: ov.ICON.bank + 'INSTITUTIONS' });
+    this.pInst = ov.el(dom, { cls: 'pill navy s2-pill s2-inst', html: ov.ICON.bank + 'INSTITUTIONS' });
     this.pEntry = ov.el(dom, { cls: 'pill green s2-pill', html: ov.ICON.target + 'ENTRY' });
     this.pReact = ov.el(dom, { cls: 'pill green s2-pill', html: ov.ICON.up + 'REACTION' });
     this.pBos = ov.el(dom, { cls: 'pill ink s2-pill s2-bos', html: ov.ICON.up + 'BOS' });
@@ -238,15 +239,15 @@ export default {
     // 0-7 form at width ~12.5-13.4; institutions at ~14.4; 0-14 at <= 16.5.
     // cy sits above the chart centre so the chart fills the main band 700-1420.
     let cx = A.kf(t, [[2.45, 3.4], [3.6, 3.75, E.outCubic], [3.92, 4.0, E.inOutSine], [4.3, 4.3, E.outCubic],
-      [4.78, 4.85, E.inOutSine], [5.6, 6.7, E.inOutCubic], [7.42, 6.85, E.inOutSine], [8.2, 7.85, E.inOutCubic],
-      [10.4, 7.95, E.inOutSine], [11.46, 8.2, E.inOutSine]]);
+      [4.78, 4.85, E.inOutSine], [5.6, 6.6, E.inOutCubic], [7.42, 6.75, E.inOutSine], [8.2, 7.75, E.inOutCubic],
+      [10.4, 7.8, E.inOutSine], [11.46, 7.9, E.inOutSine]]);
     let cy = A.kf(t, [[2.45, 7.0], [3.6, 7.05, E.outCubic], [3.92, 6.9, E.inOutSine], [4.3, 7.3, E.outCubic],
-      [4.78, 7.6, E.inOutSine], [5.6, 7.65, E.inOutCubic], [7.42, 7.7, E.inOutSine], [8.2, 8.35, E.inOutCubic],
-      [10.4, 8.3, E.inOutSine], [11.46, 8.2, E.inOutSine]]);
+      [4.78, 7.7, E.inOutSine], [5.6, 8.1, E.inOutCubic], [7.42, 8.15, E.inOutSine], [8.2, 8.75, E.inOutCubic],
+      [10.4, 8.72, E.inOutSine], [11.46, 8.6, E.inOutSine]]);
     const width = A.kf(t, [[2.45, 12.4], [3.6, 12.8, E.outCubic], [3.92, 12.45, E.inOutSine], [4.3, 12.9, E.outCubic],
-      [4.78, 13.4, E.inOutSine], [5.6, 14.4, E.inOutCubic], [7.42, 14.25, E.inOutSine], [8.2, 16.5, E.inOutCubic],
-      [9.6, 16.3, E.inOutSine], [10.3, 16.45, E.outCubic], [11.46, 15.9, E.inOutSine]]);
-    let pitch = A.kf(t, [[2.45, -12], [5.6, -10], [8.2, -10.5], [11.46, -8.5]]) + A.noise1(t * 0.35, 11) * 0.8;
+      [4.78, 13.4, E.inOutSine], [5.6, 14.4, E.inOutCubic], [7.42, 14.25, E.inOutSine], [8.2, 16.9, E.inOutCubic],
+      [9.6, 16.7, E.inOutSine], [10.3, 16.85, E.outCubic], [11.46, 16.55, E.inOutSine]]);
+    let pitch = A.kf(t, [[2.45, -12], [5.6, -10], [8.2, -9.5], [11.46, -8]]) + A.noise1(t * 0.35, 11) * 0.8;
     let yaw = A.kf(t, [[2.45, -4], [5.6, 1.2], [8.2, -2], [11.46, 2]]) + A.noise1(t * 0.3, 12) * 0.9;
     let roll = A.noise1(t * 0.25, 13) * 0.35;
     // arrive still pushing in from the zoom cut, then settle
@@ -254,7 +255,7 @@ export default {
     dolly -= 0.035 * A.hit(t, 9.64, 0.3) + 0.015 * A.hit(t, 5.18, 0.2) + 0.01 * A.hit(t, 3.92, 0.3) + 0.02 * A.hit(t, 4.5, 0.3);
     // whip right into the cut, landing where s3 picks up (cx 15.2, cy 7.35)
     const w = A.prog(t, 11.46, 11.70) ** 3;
-    cx += 7 * w; cy = A.lerp(cy, 7.35, w); yaw += 7 * w; roll -= 1.5 * w;
+    cx += 7.3 * w; cy = A.lerp(cy, 7.35, w); yaw += 7 * w; roll -= 1.5 * w;
     cam.frame({
       cx: cx + A.noise1(t * 0.4, 14) * 0.06, cy: cy + A.noise1(t * 0.37, 15) * 0.05,
       width, pitch, yaw, roll, dolly, fov: 28,
@@ -483,7 +484,7 @@ export default {
     this.dust.update(t);
 
     // ---------------------------------------------------------- DOM labels
-    const sInst = toScreen([BANK.x, BANK.y + BANK.size / 2 + 0.72, BANK.z]);
+    const sInst = toScreen([BANK.x, BANK.y + BANK.size / 2 + 0.66, BANK.z]);
     this.pill(ctx, this.pInst, t, 5.22, 7.40, sInst);
     const sEntry = toScreen(ENTRY_AT);
     this.pill(ctx, this.pEntry, t, T.entry, 11.30, sEntry);

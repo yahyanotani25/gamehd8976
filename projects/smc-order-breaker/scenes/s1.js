@@ -14,11 +14,11 @@ const bgTime = (i) => (i < 8 ? -1 : 0.04 + (i - 8) * 0.2);
 
 // word layout in world units (camera centred on (0, 0), ~80 px per unit)
 const WORDS = [
-  { str: 'SMART', word: 'Smart', y: 7.35, cap: 1.82, maxW: 9.6, z: 0.75, flight: 0.14, rotZ: -0.16, seed: 11 },
-  { str: 'MONEY', word: 'Money', y: 4.95, cap: 1.82, maxW: 9.6, z: 0.75, flight: 0.16, rotZ: 0.14, seed: 23 },
-  { str: 'CONCEPTS', word: 'Concepts', y: 2.35, cap: 2.1, maxW: 10.1, z: 0.95, flight: 0.16, rotZ: 0, seed: 37 },
+  { str: 'SMART', word: 'Smart', y: 6.9, cap: 1.82, maxW: 9.6, z: 0.75, flight: 0.14, rotZ: -0.16, seed: 11 },
+  { str: 'MONEY', word: 'Money', y: 4.5, cap: 1.82, maxW: 9.6, z: 0.75, flight: 0.16, rotZ: 0.14, seed: 23 },
+  { str: 'CONCEPTS', word: 'Concepts', y: 1.9, cap: 2.1, maxW: 9.8, z: 0.95, flight: 0.16, rotZ: 0, seed: 37 },
 ];
-const Q = { y: -2.55, cap: 3.15, z: 1.0 };
+const Q = { y: -2.65, cap: 3.3, z: 1.0 };
 
 export default {
   id: 's1', start: 0, end: 2.45,
@@ -80,7 +80,7 @@ export default {
       outer.add(inner);
       group.add(outer);
       const base = new THREE.Color(green ? PAL.green : PAL.maroon);
-      const lit = green ? new THREE.Color('#7dffb0') : new THREE.Color('#e0384a');
+      const lit = green ? new THREE.Color('#2bea72') : new THREE.Color('#b0223a');
       // shockwave ring on the paper
       const ring = new THREE.Mesh(
         new THREE.RingGeometry(0.93, 1.0, 96),
@@ -117,6 +117,14 @@ export default {
     group.add(this.qSparks.group);
     this.qAt = ctx.wt('hain', 1);
 
+    // ---------------- light sweep: a soft white glint streak floating above
+    // the words (invisible over the white paper, a gleam over the letters)
+    const gm = new THREE.MeshBasicMaterial({ map: kit.radialTexture(), color: 0xffffff, transparent: true, opacity: 0, depthWrite: false });
+    this.glint = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), gm);
+    this.glint.scale.set(1.5, 15, 1);
+    this.glint.rotation.z = -0.42;
+    group.add(this.glint);
+
     // ---------------- dust
     this.dust = kit.dust({ count: 70, w: 22, h: 30, zMin: 2, zMax: 16, size: 0.16, seed: 21, opacity: 0.55 });
     group.add(this.dust.group);
@@ -128,17 +136,17 @@ export default {
     const N = (s, f = 0.6) => A.noise1(t * f, s);
 
     // ---------------- camera: rush back -> slow orbit/push -> hard push
-    const dolly = A.kf(t, [[0, 0.3], [0.62, 1.0, E.outCubic], [2.22, 0.9, E.inOutSine], [2.45, 0.38, E.inCubic]]);
-    const pitch = A.kf(t, [[0, -22], [0.7, -10, E.outCubic], [2.22, -6.5, E.inOutSine], [2.45, -3, E.inCubic]]) + N(1, 0.5) * 1.2;
-    const yaw = A.kf(t, [[0, 11], [0.7, 3.5, E.outCubic], [2.22, -3.5, E.inOutSine]]) + N(2, 0.45) * 1.2;
+    const dolly = A.kf(t, [[0, 0.3], [0.5, 1.0, E.outExpo], [2.22, 0.9, E.inOutSine], [2.45, 0.38, E.inCubic]]);
+    const pitch = A.kf(t, [[0, -17], [0.55, -10, E.outExpo], [2.22, -6.5, E.inOutSine], [2.45, -3, E.inCubic]]) + N(1, 0.5) * 1.2;
+    const yaw = A.kf(t, [[0, 11], [0.6, 3.5, E.outExpo], [2.22, -3.5, E.inOutSine]]) + N(2, 0.45) * 1.2;
     const roll = A.kf(t, [[0, -7], [0.65, 0, E.outCubic]]) + N(3, 0.4) * 0.5;
-    const cy = A.kf(t, [[0, -1.2], [0.7, 0, E.outCubic], [2.22, 0.15], [2.45, -0.6, E.inCubic]]) + N(4, 0.35) * 0.12;
-    const cx = N(5, 0.3) * 0.12;
+    const cy = A.kf(t, [[0, -1.6], [0.55, 0, E.outExpo], [2.22, 0.15], [2.45, -0.6, E.inCubic]]) + N(4, 0.35) * 0.12;
+    const cx = A.kf(t, [[0, -1.8], [0.55, 0, E.outExpo]]) + N(5, 0.3) * 0.12;
     cam.frame({ cx, cy, width: 13.5, pitch, yaw, roll, dolly });
     const camPos = cam.state.pos;
 
     // ---------------- post: opening blur, landing pulses, push into the cut
-    const open = 1 - A.ease(t, 0, 0.5, E.outCubic);
+    const open = 1 - A.ease(t, 0, 0.4, E.outCubic);
     let zoom = 0.26 * open, ca = 2.2 * open, shake = 0, flash = 0;
     for (const w of this.words) {
       const h = A.hit(t, w.L, 0.1);
@@ -196,15 +204,15 @@ export default {
         const b = dt > 0 ? Math.exp(-dt * 9) * Math.sin(dt * 30) : 0;
         const sq = dt > 0 ? Math.exp(-dt * 16) : 0;
         const wx = c.holder.userData.baseX * w.fit;
-        const sx = A.lerp(-w.W / 2 - 3.5, w.W / 2 + 3.5, sweepP) + (w.y - 4.9) * 0.6;
+        const sx = A.lerp(-w.W / 2 - 3.5, w.W / 2 + 3.5, sweepP) + (w.y - 4.5) * 0.6;
         const k = sweepOn * Math.exp(-(((wx - sx) / 1.1) ** 2));
         c.holder.position.z = Math.max(-0.1, b) * 0.45 / w.fit + (k * 0.32) / w.fit;
         c.holder.scale.set(1 + 0.12 * sq, 1 - 0.24 * sq + 0.04 * k, 1 - 0.3 * sq);
         c.holder.rotation.x = -0.12 * k;
         const m = c.mesh.material[0];
-        m.color.copy(w.base).lerp(w.lit, k * 0.85);
+        m.color.copy(w.base).lerp(w.lit, k * 0.6);
         m.emissive.copy(m.color);
-        m.emissiveIntensity = 0.08 + 0.55 * k + 0.35 * sq;
+        m.emissiveIntensity = 0.08 + 0.4 * k + 0.35 * sq;
       });
 
       // shockwave ring + dust burst
@@ -215,6 +223,11 @@ export default {
       w.ring.material.opacity = 0.42 * (1 - rp) * (1 - rp);
       w.sp.update(t, w.L, [0, w.y - w.cap * 0.45, 0.4]);
     }
+
+    // glint streak riding the sweep
+    this.glint.visible = sweepOn > 0.001;
+    this.glint.position.set(A.lerp(-9.5, 9.5, sweepP), 4.4, 2.2);
+    this.glint.material.opacity = 0.62 * sweepOn;
 
     // underline under CONCEPTS
     this.under.setDraw(A.ease(t, 0.8, 1.05, E.outExpo));

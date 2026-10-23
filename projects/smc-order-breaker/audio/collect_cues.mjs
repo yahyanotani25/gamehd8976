@@ -16,6 +16,16 @@ for (const s of SCENES) {
   }
 }
 cues.sort((a, b) => a.t - b.t);
+// Two scenes often both mark the cut between them (e.g. a whoosh at 18.00):
+// keep one of any same sound from different scenes within 80 ms.
+const merged = [];
+for (const c of cues) {
+  const dup = merged.find((m) => m.sfx === c.sfx && m.scene !== c.scene && Math.abs(m.t - c.t) < 0.08);
+  if (dup) { dup.gain = Math.max(dup.gain ?? 0, c.gain ?? 0); continue; }
+  merged.push(c);
+}
+cues.length = 0;
+cues.push(...merged);
 fs.writeFileSync(path.join(here, 'cues.json'), JSON.stringify(cues, null, 1));
 const by = {};
 for (const c of cues) by[c.scene] = (by[c.scene] || 0) + 1;

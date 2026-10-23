@@ -46,16 +46,16 @@ const ROLE = {
   green: { text: '#079a3e', block: '#0bb04a', on: '#ffffff' },
   red: { text: '#e3121f', block: '#f5222d', on: '#ffffff' },
   navy: { text: '#142a57', block: '#1d3b7c', on: '#ffffff' },
-  gold: { text: '#c27800', block: '#ffb21a', on: '#2a1600' },
+  gold: { text: '#b86e00', block: '#ffb21a', on: '#2a1600' },
 };
 
 const FONT_PX = 64;
-const GAP_PX = 20;        // space between words
-const MAX_W = 860;        // max text width (pill adds padding; stays inside x 70-1010)
-const PAD_X = 34;         // pill horizontal padding
-const PILL_H = 104;
+const GAP_PX = 30;        // space between words
+const MAX_W = 830;        // max text width (pill adds padding; stays inside x 70-1010)
+const PAD_X = 42;         // pill horizontal padding
+const PILL_H = 108;
 const CY = 1560;          // caption centre
-const BLK_PX = 12;        // highlight block padding around a word
+const BLK_PX = 11;        // highlight block padding around a word
 const LEAD = 0.02;        // words start popping this much before their start
 const SWAP = 0.06;        // chunk exit time before the next chunk
 const HOLD = 0.35;        // hold after the last word before hiding in long pauses
@@ -121,7 +121,7 @@ export default {
         background: linear-gradient(180deg, rgba(255,255,255,0.94), rgba(246,247,250,0.9));
         box-shadow: 0 16px 36px rgba(18,24,38,0.20), 0 3px 8px rgba(18,24,38,0.10), inset 0 1px 0 rgba(255,255,255,1);
         border: 1.5px solid rgba(21,23,28,0.07); box-sizing: border-box; }
-      .captions-chunk { white-space: nowrap; font: 900 ${FONT_PX}px/1 Montserrat; letter-spacing: 0.005em;
+      .captions-chunk { white-space: nowrap; transform-origin: 0 50%; font: 900 ${FONT_PX}px/1 Montserrat; letter-spacing: 0.005em;
         perspective: 700px; padding: 0; }
       .captions-w { display: inline-block; position: relative; transform-origin: 50% 70%;
         margin-right: ${GAP_PX}px; padding: 6px 0 2px; }
@@ -181,6 +181,20 @@ export default {
     const { A } = ctx;
     const { E } = A;
     const chunks = this.chunks;
+    // index of the word being spoken (last started) in chunk c
+    const active = (c) => {
+      let a = 0;
+      for (let j = 0; j < c.g.length; j++) if (t >= c.g[j].start - LEAD) a = j;
+      return a;
+    };
+    // revealed line width: grows (and the line re-centres) as words pop in
+    const rw = (c, j) => c.boxes[j].x + c.boxes[j].w;
+    const lineW = (c) => {
+      const a = active(c);
+      if (a === 0) return rw(c, 0);
+      const st = c.g[a].start - LEAD;
+      return A.lerp(rw(c, a - 1), rw(c, a), E.outExpo(A.prog(t, st, st + 0.16)));
+    };
 
     // ---- pill: follows the current chunk, morphing width between chunks
     let pc = -1;
@@ -193,16 +207,17 @@ export default {
     if (pc >= 0 && t < chunks[pc].exE + 0.001) {
       const c = chunks[pc], prev = chunks[pc - 1];
       const contig = prev && !prev.hides;
-      let w = c.pillW, scale = 1, opacity = 1, y = CY, blur = 0;
+      const cw = lineW(c) * c.fit + 2 * PAD_X;
+      let w = cw, scale = 1, opacity = 1, y = CY, blur = 0;
       if (contig) {
-        const m = E.outExpo(A.prog(t, c.tIn - SWAP, c.tIn + 0.14));
-        w = A.lerp(prev.pillW, c.pillW, m);
+        const m = E.outExpo(A.prog(t, c.tIn - 0.03, c.tIn + 0.14));
+        w = A.lerp(prev.pillW, cw, m);
         scale = 1 + 0.025 * A.pulse(t, c.tIn + 0.02, 0.16); // tiny breath on each swap
       } else {
         const p = A.prog(t, c.tIn - 0.04, c.tIn + 0.2);
         scale = 0.82 + 0.18 * E.outBack(p);
         opacity = A.prog(t, c.tIn - 0.04, c.tIn + 0.05);
-        w = A.lerp(c.pillW * 0.7, c.pillW, E.outExpo(p));
+        w = A.lerp(cw * 0.7, cw, E.outExpo(p));
         y = CY + 14 * (1 - E.outExpo(p));
       }
       if (c.hides) {
@@ -213,6 +228,13 @@ export default {
         y += 10 * q;
       }
       this.pill.style.width = `${w.toFixed(1)}px`;
+      // keyword glow: the pill picks up the keyword colour as it is spoken
+      const a = active(c);
+      const R = c.roles[a];
+      const k = R === 'ink' ? 0 : A.hit(t, c.g[a].start, 0.5) * 0.8 + 0.2;
+      const [kr, kg, kb] = hex(ROLE[R].block);
+      this.pill.style.boxShadow = `0 16px 36px rgba(18,24,38,0.20), 0 3px 8px rgba(18,24,38,0.10), inset 0 1px 0 #fff` +
+        (k > 0.01 ? `, 0 0 0 ${(2 + 3 * k).toFixed(2)}px rgba(${kr},${kg},${kb},${(0.32 * k).toFixed(3)}), 0 12px 40px rgba(${kr},${kg},${kb},${(0.3 * k).toFixed(3)})` : '');
       ctx.ov.place(this.pill, { x: 540, y, scale, opacity, blur });
     } else ctx.ov.place(this.pill, { visible: false });
 
@@ -221,20 +243,19 @@ export default {
       if (t < c.tIn || t >= c.exE) { c.e.style.display = 'none'; continue; }
       const q = A.prog(t, c.exS, c.exE);
       const qe = E.inCubic(q);
+      const sc = c.fit * (1 - 0.1 * qe);
       ctx.ov.place(c.e, {
-        x: 540, y: CY + 4 - (c.hides ? -8 : 18) * qe,
-        scale: c.fit * (1 - 0.1 * qe), opacity: 1 - q, blur: 7 * q,
+        x: 540 - (lineW(c) * sc) / 2, ax: 0, y: CY + 4 - (c.hides ? -8 : 18) * qe,
+        scale: sc, opacity: 1 - q, blur: 7 * q,
       });
 
-      // active word = last started
-      let a = 0;
-      for (let j = 0; j < c.g.length; j++) if (t >= c.g[j].start - LEAD) a = j;
+      const a = active(c);
 
       c.spans.forEach((s, j) => {
         const st = c.g[j].start - LEAD;
         if (t < st) { s.style.opacity = '0'; s.style.transform = 'scale(0.5)'; s.style.filter = 'none'; return; }
         const p = A.prog(t, st, st + 0.2);
-        const op = A.prog(t, st, st + 0.05);
+        const op = A.prog(t, st, st + 0.035);
         const sc0 = 0.5 + 0.5 * E.outBack(p);
         const rx = 62 * (1 - E.outCubic(A.prog(t, st, st + 0.16)));
         const y = 26 * (1 - E.outExpo(p));
@@ -246,9 +267,16 @@ export default {
         s.style.transform = `translateY(${y.toFixed(2)}px) rotateX(${rx.toFixed(2)}deg) scale(${sc.toFixed(4)})`;
         s.style.filter = bl > 0.05 ? `blur(${bl.toFixed(2)}px)` : 'none';
         const R = ROLE[c.roles[j]];
-        // text turns to its "on block" colour as the block arrives
-        const onBlk = j === a && t >= st + 0.03;
-        s.style.color = onBlk ? R.on : R.text;
+        // text turns to its "on block" colour as the block arrives (the
+        // first word of a chunk pops in together with its block)
+        let k = 0;
+        if (j === a) k = j === 0 ? 1 : E.outExpo(A.prog(t, st, st + 0.13));
+        if (k >= 0.999) s.style.color = R.on;
+        else if (k <= 0.001) s.style.color = R.text;
+        else {
+          const c0 = hex(R.text), c1 = hex(R.on);
+          s.style.color = `rgb(${c0.map((v, i) => Math.round(A.lerp(v, c1[i], k))).join(', ')})`;
+        }
       });
 
       // highlight block slides from the previous word to the active one
@@ -275,11 +303,11 @@ export default {
         bo = A.prog(t, st, st + 0.06);
       }
       const b = c.boxes[a];
-      const top = b.y - 4, h = b.h + 8;
+      const top = b.y - 2, h = b.h + 4;
       const [r, g, bl] = col.map((v) => Math.round(v));
       Object.assign(c.blk.style, {
         width: `${w.toFixed(1)}px`, height: `${h}px`,
-        transform: `translate(${x.toFixed(1)}px, ${top}px) scale(${(bs * 1.04).toFixed(4)}, ${(1.04 / Math.sqrt(bs)).toFixed(4)}) rotate(-1.5deg)`,
+        transform: `translate(${x.toFixed(1)}px, ${top}px) scale(${(bs * 1.02).toFixed(4)}, ${(1.02 / Math.sqrt(bs)).toFixed(4)}) rotate(-1deg)`,
         opacity: bo.toFixed(3),
         backgroundColor: `rgb(${r}, ${g}, ${bl})`,
         boxShadow: `0 10px 22px rgba(${r}, ${g}, ${bl}, 0.34), 0 2px 4px rgba(18, 24, 38, 0.18)`,

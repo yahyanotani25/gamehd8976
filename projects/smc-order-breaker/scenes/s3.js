@@ -559,7 +559,9 @@ export default {
   updateTitle(t, ctx, step) {
     const { A } = ctx; const E = A.E, T = this.T;
     const M = T.morph;
-    const mk = E.inOutCubic(A.prog(t, M, M + 0.4));
+    // settle to the longer title's scale just before the new glyphs arrive, so
+    // "2. BREAKER BLOCK" never exceeds x 70-1010 mid-morph
+    const mk = E.inOutCubic(A.prog(t, M - 0.22, M + 0.06));
     const sc = A.lerp(1, this.kB, mk) * (1 + 0.05 * A.hit(t, M + 0.02, 0.16));
     ctx.pin(this.titleA.group, { ...TITLE_PIN, worldHeight: this.titleA.capH, scale: sc });
     ctx.pin(this.titleB.group, { ...TITLE_PIN, worldHeight: this.titleB.capH, scale: sc });
