@@ -1,0 +1,104 @@
+{
+ "pop": {
+  "file": "pop.wav",
+  "hit": 0.002,
+  "dur": 0.639,
+  "source": "synth"
+ },
+ "grow": {
+  "file": "grow.wav",
+  "hit": 0.0,
+  "dur": 0.838,
+  "source": "synth"
+ },
+ "tick": {
+  "file": "tick.wav",
+  "hit": 0.001,
+  "dur": 0.407,
+  "source": "synth"
+ },
+ "impact": {
+  "file": "impact.wav",
+  "hit": 0.003,
+  "dur": 2.949,
+  "source": "synth"
+ },
+ "boom": {
+  "file": "boom.wav",
+  "hit": 0.004,
+  "dur": 4.985,
+  "source": "synth"
+ },
+ "crack": {
+  "file": "crack.wav",
+  "hit": 0.0,
+  "dur": 1.939,
+  "source": "synth"
+ },
+ "stamp": {
+  "file": "stamp.wav",
+  "hit": 0.002,
+  "dur": 1.017,
+  "source": "synth"
+ },
+ "ding": {
+  "file": "ding.wav",
+  "hit": 0.002,
+  "dur": 4.048,
+  "source": "synth"
+ },
+ "blip": {
+  "file": "blip.wav",
+  "hit": 0.002,
+  "dur": 1.37,
+  "source": "synth"
+ },
+ "swipe": {
+  "file": "swipe.wav",
+  "hit": 0.12,
+  "dur": 0.815,
+  "source": "synth"
+ },
+ "flip": {
+  "file": "flip.wav",
+  "hit": 0.05,
+  "dur": 1.016,
+  "source": "synth"
+ },
+ "shimmer": {
+  "file": "shimmer.wav",
+  "hit": 0.004,
+  "dur": 2.829,
+  "source": "synth"
+ },
+ "riser": {
+  "file": "riser.wav",
+  "hit": 1.1,
+  "dur": 1.1,
+  "source": "synth"
+ },
+ "final": {
+  "file": "final.wav",
+  "hit": 0.004,
+  "dur": 4.98,
+  "source": "synth"
+ },
+ "whoosh": {
+  "file": "whoosh.wav",
+  "hit": 0.894,
+  "dur": 2.116,
+  "source": "owner sfx/whoosh.mp3"
+ },
+ "click": {
+  "file": "click.wav",
+  "hit": 0.158,
+  "dur": 0.648,
+  "source": "owner sfx/click-double.mp3"
+ },
+ "drone": {
+  "file": "drone.wav",
+  "hit": 5.29,
+  "dur": 35.671,
+  "source": "owner sfx/low-drone.mp3"
+ }
+}
