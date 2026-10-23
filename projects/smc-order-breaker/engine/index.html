@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>SMC Order Block / Breaker Block</title>
+<style>
+  @font-face { font-family: Bebas; src: url(/node_modules/@fontsource/bebas-neue/files/bebas-neue-latin-400-normal.woff2) format('woff2'); }
+  @font-face { font-family: Anton; src: url(/node_modules/@fontsource/anton/files/anton-latin-400-normal.woff2) format('woff2'); }
+  @font-face { font-family: Montserrat; font-weight: 700; src: url(/node_modules/@fontsource/montserrat/files/montserrat-latin-700-normal.woff2) format('woff2'); }
+  @font-face { font-family: Montserrat; font-weight: 800; src: url(/node_modules/@fontsource/montserrat/files/montserrat-latin-800-normal.woff2) format('woff2'); }
+  @font-face { font-family: Montserrat; font-weight: 900; src: url(/node_modules/@fontsource/montserrat/files/montserrat-latin-900-normal.woff2) format('woff2'); }
+  @font-face { font-family: Oswald; font-weight: 700; src: url(/node_modules/@fontsource/oswald/files/oswald-latin-700-normal.woff2) format('woff2'); }
+  html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: #fff; }
+  #stage, #overlay { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: hidden; }
+  #stage canvas { display: block; }
+  #overlay { pointer-events: none; transform-origin: 50% 50%; }
+</style>
+<script type="importmap">
+{ "imports": { "three": "/node_modules/three/build/three.module.js", "three/addons/": "/node_modules/three/examples/jsm/" } }
+</script>
+</head>
+<body>
+<div id="stage"></div>
+<div id="overlay"></div>
+<script type="module" src="/engine/main.js"></script>
+</body>
+</html>

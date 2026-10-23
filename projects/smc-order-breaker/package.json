@@ -1,0 +1,21 @@
+{
+  "name": "smc-order-breaker",
+  "version": "1.0.0",
+  "description": "Order Block vs Breaker Block — 3D motion-graphics short",
+  "scripts": {
+    "preview": "node render/preview.mjs",
+    "render": "node render/render.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@fontsource/anton": "^5.3.0",
+    "@fontsource/bebas-neue": "^5.3.0",
+    "@fontsource/montserrat": "^5.3.0",
+    "@fontsource/oswald": "^5.3.0",
+    "three": "^0.180.0"
+  },
+  "type": "module",
+  "private": true
+}

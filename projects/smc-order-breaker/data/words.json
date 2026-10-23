@@ -1,0 +1,500 @@
+[
+ {
+  "word": "Smart",
+  "start": 0.14,
+  "end": 0.44,
+  "score": 0.975
+ },
+ {
+  "word": "Money",
+  "start": 0.48,
+  "end": 0.66,
+  "score": 0.391
+ },
+ {
+  "word": "Concepts",
+  "start": 0.68,
+  "end": 1.08,
+  "score": 0.691
+ },
+ {
+  "word": "ko",
+  "start": 1.12,
+  "end": 1.18,
+  "score": 0.989
+ },
+ {
+  "word": "samajhna",
+  "start": 1.3,
+  "end": 1.64,
+  "score": 0.988
+ },
+ {
+  "word": "chahte",
+  "start": 1.7,
+  "end": 1.96,
+  "score": 0.842
+ },
+ {
+  "word": "hain?",
+  "start": 2.02,
+  "end": 2.16,
+  "score": 0.767
+ },
+ {
+  "word": "Order",
+  "start": 2.781,
+  "end": 3.021,
+  "score": 0.695
+ },
+ {
+  "word": "Block",
+  "start": 3.061,
+  "end": 3.361,
+  "score": 0.789
+ },
+ {
+  "word": "woh",
+  "start": 3.701,
+  "end": 3.841,
+  "score": 0.311
+ },
+ {
+  "word": "zone",
+  "start": 3.921,
+  "end": 4.181,
+  "score": 0.558
+ },
+ {
+  "word": "hota",
+  "start": 4.181,
+  "end": 4.401,
+  "score": 0.987
+ },
+ {
+  "word": "hai",
+  "start": 4.501,
+  "end": 4.641,
+  "score": 0.996
+ },
+ {
+  "word": "jahan",
+  "start": 4.801,
+  "end": 5.061,
+  "score": 0.801
+ },
+ {
+  "word": "institutions",
+  "start": 5.121,
+  "end": 5.921,
+  "score": 0.76
+ },
+ {
+  "word": "market",
+  "start": 6.021,
+  "end": 6.361,
+  "score": 0.97
+ },
+ {
+  "word": "mein",
+  "start": 6.401,
+  "end": 6.521,
+  "score": 0.536
+ },
+ {
+  "word": "entry",
+  "start": 6.641,
+  "end": 6.881,
+  "score": 0.722
+ },
+ {
+  "word": "le",
+  "start": 6.941,
+  "end": 7.041,
+  "score": 0.852
+ },
+ {
+  "word": "sakte",
+  "start": 7.101,
+  "end": 7.342,
+  "score": 0.997
+ },
+ {
+  "word": "hain,",
+  "start": 7.402,
+  "end": 7.522,
+  "score": 0.756
+ },
+ {
+  "word": "jis",
+  "start": 8.002,
+  "end": 8.122,
+  "score": 0.99
+ },
+ {
+  "word": "ki",
+  "start": 8.162,
+  "end": 8.222,
+  "score": 0.993
+ },
+ {
+  "word": "wajah",
+  "start": 8.282,
+  "end": 8.522,
+  "score": 0.773
+ },
+ {
+  "word": "se",
+  "start": 8.602,
+  "end": 8.682,
+  "score": 0.997
+ },
+ {
+  "word": "price",
+  "start": 9.062,
+  "end": 9.422,
+  "score": 0.653
+ },
+ {
+  "word": "mein",
+  "start": 9.442,
+  "end": 9.562,
+  "score": 0.563
+ },
+ {
+  "word": "reaction",
+  "start": 9.642,
+  "end": 10.082,
+  "score": 0.41
+ },
+ {
+  "word": "aane",
+  "start": 10.142,
+  "end": 10.322,
+  "score": 0.93
+ },
+ {
+  "word": "ka",
+  "start": 10.382,
+  "end": 10.462,
+  "score": 0.994
+ },
+ {
+  "word": "imkaan",
+  "start": 10.602,
+  "end": 10.962,
+  "score": 0.994
+ },
+ {
+  "word": "hota",
+  "start": 11.042,
+  "end": 11.242,
+  "score": 0.997
+ },
+ {
+  "word": "hai.",
+  "start": 11.302,
+  "end": 11.402,
+  "score": 0.896
+ },
+ {
+  "word": "Jab",
+  "start": 12.063,
+  "end": 12.203,
+  "score": 0.997
+ },
+ {
+  "word": "yeh",
+  "start": 12.243,
+  "end": 12.343,
+  "score": 0.514
+ },
+ {
+  "word": "block",
+  "start": 12.363,
+  "end": 12.603,
+  "score": 0.772
+ },
+ {
+  "word": "fail",
+  "start": 12.743,
+  "end": 12.943,
+  "score": 0.335
+ },
+ {
+  "word": "ho",
+  "start": 13.003,
+  "end": 13.063,
+  "score": 0.994
+ },
+ {
+  "word": "jata",
+  "start": 13.123,
+  "end": 13.383,
+  "score": 0.997
+ },
+ {
+  "word": "hai",
+  "start": 13.463,
+  "end": 13.603,
+  "score": 0.996
+ },
+ {
+  "word": "aur",
+  "start": 13.843,
+  "end": 14.023,
+  "score": 0.998
+ },
+ {
+  "word": "apna",
+  "start": 14.143,
+  "end": 14.343,
+  "score": 0.997
+ },
+ {
+  "word": "role",
+  "start": 14.443,
+  "end": 14.643,
+  "score": 0.747
+ },
+ {
+  "word": "reverse",
+  "start": 14.723,
+  "end": 15.083,
+  "score": 0.578
+ },
+ {
+  "word": "kar",
+  "start": 15.103,
+  "end": 15.203,
+  "score": 0.997
+ },
+ {
+  "word": "leta",
+  "start": 15.263,
+  "end": 15.463,
+  "score": 0.996
+ },
+ {
+  "word": "hai,",
+  "start": 15.523,
+  "end": 15.643,
+  "score": 0.964
+ },
+ {
+  "word": "toh",
+  "start": 16.043,
+  "end": 16.143,
+  "score": 0.664
+ },
+ {
+  "word": "yeh",
+  "start": 16.183,
+  "end": 16.303,
+  "score": 0.629
+ },
+ {
+  "word": "Breaker",
+  "start": 16.463,
+  "end": 16.803,
+  "score": 0.711
+ },
+ {
+  "word": "Block",
+  "start": 16.844,
+  "end": 17.064,
+  "score": 0.796
+ },
+ {
+  "word": "ban",
+  "start": 17.104,
+  "end": 17.224,
+  "score": 0.987
+ },
+ {
+  "word": "jata",
+  "start": 17.264,
+  "end": 17.504,
+  "score": 0.985
+ },
+ {
+  "word": "hai.",
+  "start": 17.564,
+  "end": 17.664,
+  "score": 0.969
+ },
+ {
+  "word": "Order",
+  "start": 18.284,
+  "end": 18.524,
+  "score": 0.754
+ },
+ {
+  "word": "Block",
+  "start": 18.584,
+  "end": 18.864,
+  "score": 0.794
+ },
+ {
+  "word": "potential",
+  "start": 19.064,
+  "end": 19.584,
+  "score": 0.775
+ },
+ {
+  "word": "entry",
+  "start": 19.744,
+  "end": 20.024,
+  "score": 0.718
+ },
+ {
+  "word": "ka",
+  "start": 20.084,
+  "end": 20.144,
+  "score": 0.858
+ },
+ {
+  "word": "signal",
+  "start": 20.224,
+  "end": 20.524,
+  "score": 0.982
+ },
+ {
+  "word": "deta",
+  "start": 20.564,
+  "end": 20.764,
+  "score": 0.991
+ },
+ {
+  "word": "hai,",
+  "start": 20.844,
+  "end": 20.944,
+  "score": 0.996
+ },
+ {
+  "word": "jabke",
+  "start": 21.384,
+  "end": 21.624,
+  "score": 0.799
+ },
+ {
+  "word": "Breaker",
+  "start": 21.745,
+  "end": 22.085,
+  "score": 0.711
+ },
+ {
+  "word": "Block",
+  "start": 22.125,
+  "end": 22.405,
+  "score": 0.794
+ },
+ {
+  "word": "potential",
+  "start": 22.685,
+  "end": 23.185,
+  "score": 0.766
+ },
+ {
+  "word": "reversal",
+  "start": 23.285,
+  "end": 23.785,
+  "score": 0.754
+ },
+ {
+  "word": "ko",
+  "start": 23.845,
+  "end": 23.905,
+  "score": 0.987
+ },
+ {
+  "word": "show",
+  "start": 24.005,
+  "end": 24.105,
+  "score": 0.744
+ },
+ {
+  "word": "karta",
+  "start": 24.165,
+  "end": 24.425,
+  "score": 0.995
+ },
+ {
+  "word": "hai.",
+  "start": 24.505,
+  "end": 24.605,
+  "score": 0.996
+ },
+ {
+  "word": "In",
+  "start": 25.205,
+  "end": 25.285,
+  "score": 0.989
+ },
+ {
+  "word": "concepts",
+  "start": 25.365,
+  "end": 25.805,
+  "score": 0.707
+ },
+ {
+  "word": "par",
+  "start": 25.845,
+  "end": 25.945,
+  "score": 0.995
+ },
+ {
+  "word": "mastery",
+  "start": 26.045,
+  "end": 26.405,
+  "score": 0.711
+ },
+ {
+  "word": "hasil",
+  "start": 26.486,
+  "end": 26.746,
+  "score": 0.988
+ },
+ {
+  "word": "karein",
+  "start": 26.806,
+  "end": 27.026,
+  "score": 0.669
+ },
+ {
+  "word": "aur",
+  "start": 27.366,
+  "end": 27.506,
+  "score": 0.997
+ },
+ {
+  "word": "zyada",
+  "start": 27.666,
+  "end": 27.946,
+  "score": 0.794
+ },
+ {
+  "word": "behtar",
+  "start": 28.006,
+  "end": 28.306,
+  "score": 0.721
+ },
+ {
+  "word": "trading",
+  "start": 28.366,
+  "end": 28.646,
+  "score": 0.748
+ },
+ {
+  "word": "decisions",
+  "start": 28.666,
+  "end": 29.066,
+  "score": 0.552
+ },
+ {
+  "word": "lein!",
+  "start": 29.126,
+  "end": 29.266,
+  "score": 0.513
+ }
+]
