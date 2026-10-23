@@ -477,7 +477,7 @@ export default {
       const p = A.prog(t, tin, T.stamp);
       const land = A.hit(t, T.stamp, 0.12);
       const outQ = A.prog(t, 13.62, 13.74);
-      const sc = (t < T.stamp ? A.lerp(2.6, 1, E.inQuad(p)) : 1 - 0.08 * land * Math.cos((t - T.stamp) * 30)) * (1 + 0.2 * outQ);
+      const sc = (t < T.stamp ? A.lerp(2.0, 1, E.inQuad(p)) : 1 - 0.08 * land * Math.cos((t - T.stamp) * 30)) * (1 + 0.2 * outQ);
       const op = Math.min(1, p * 2.5) * (1 - outQ);
       const pa = toScreen([21.9, ZYM, 0.45]);
       if (op > 0.001) ov.place(this.pFail, { x: Math.min(pa.x, 945 - this.pw.fail / 2), y: pa.y, opacity: op, scale: sc / push, rot: -7 + 3 * (1 - p), blur: (1 - p) * 9 + outQ * 12 });
