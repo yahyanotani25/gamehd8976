@@ -9,11 +9,13 @@
 import { CANDLES, ZONE, ZONE_X1_S2, ZONE_X1_S3, X } from './story-data.js';
 
 const NC = 15; // candles 0–14 belong to this scene
-const BANK = { x: 11.4, y: 6.95, z: 0.95, size: 1.75 };
+// the bank sits ON the zone, right of the impulse (clear of candles 5-7)
+const BANK = { x: 10.5, y: 5.36, z: 0.35, size: 1.6 };
 const ENTRY_AT = [8.9, 3.65, 0.45];
 const TAP = [11.5, 4.05];
-const ARROW_FROM = [13.2, 4.95, 0.5], ARROW_TO = [15.75, 8.95, 0.5];
-const REACT_AT = [12.0, 2.05, 0.4];
+// reaction arrow runs up the empty space left of candles 12-14
+const ARROW_FROM = [11.45, 6.1, 0.55], ARROW_TO = [13.05, 10.25, 0.55];
+const REACT_AT = [11.0, 2.15, 0.4]; // pill under the zone (fills the lower main band)
 
 // [start, duration, mode] per candle
 const APPEAR = [
@@ -124,7 +126,7 @@ export default {
     this.bankRoot.add(this.bankSquash);
     group.add(this.bankRoot);
     this.bankPool = kit.paperGlow({ color: '#2f6bff', w: 2.6, h: 1.8, opacity: 0.2 });
-    this.bankPool.position.set(BANK.x + 0.3, BANK.y - 0.5, 0.006);
+    this.bankPool.position.set(BANK.x + 0.2, BANK.y - 0.55, 0.006);
     group.add(this.bankPool);
     this.bankGlow = kit.glow({ color: '#4f7dff', size: 3.6, opacity: 0.3 });
     this.bankGlow.position.set(BANK.x, BANK.y, 0.3);
@@ -141,11 +143,11 @@ export default {
     TOKEN_WAVES.forEach((tw, w) => {
       for (let k = 0; k < TOKENS_PER_WAVE; k++) {
         const t0 = tw + k * 0.032;
-        const lx = 5.3 + ((k + 0.15 + r() * 0.7) / TOKENS_PER_WAVE) * 9.4;
+        const lx = 5.2 + ((k + 0.15 + r() * 0.7) / TOKENS_PER_WAVE) * 7.8;
         const ly = 3.25 + r() * 0.85;
-        const s = new THREE.Vector3(BANK.x + (r() - 0.5) * 0.7, BANK.y - BANK.size * 0.42, BANK.z + 0.2);
+        const s = new THREE.Vector3(BANK.x + (r() - 0.5) * 0.6, BANK.y + 0.15, BANK.z + 0.55);
         const e = new THREE.Vector3(lx, ly, 0.28);
-        const c = new THREE.Vector3((s.x + e.x) / 2, Math.max(s.y, e.y) + 0.9 + r() * 0.7, 1.7 + r() * 0.6);
+        const c = new THREE.Vector3((s.x + e.x) / 2, Math.max(s.y, e.y) + 0.6 + r() * 0.5, 1.7 + r() * 0.6);
         const mat = kit.glossy(PAL.navy, { emissive: 0.25, rough: 0.22 });
         const mesh = new THREE.Mesh(coinGeo, mat);
         mesh.castShadow = true;
@@ -220,37 +222,39 @@ export default {
 
     // ---------------------------------------------------------- DOM labels
     ov.css(`
-      .s2-pill { font-size: 36px; padding: 16px 28px 14px; gap: 12px; }
-      .s2-bos { font: 800 26px/1 Montserrat; letter-spacing: 0.08em; color: #fff; padding: 9px 14px 8px;
-                border-radius: 10px; background: linear-gradient(180deg, #2a2f3a, #111318);
-                box-shadow: 0 8px 18px rgba(18, 24, 38, 0.25); white-space: nowrap; }
+      .s2-pill { font-size: 34px; padding: 15px 26px 13px; gap: 11px; }
+      .s2-pill.s2-bos { font-size: 30px; padding: 12px 20px 10px; gap: 9px; letter-spacing: 0.08em; }
     `);
     this.pInst = ov.el(dom, { cls: 'pill navy s2-pill', html: ov.ICON.bank + 'INSTITUTIONS' });
     this.pEntry = ov.el(dom, { cls: 'pill green s2-pill', html: ov.ICON.target + 'ENTRY' });
     this.pReact = ov.el(dom, { cls: 'pill green s2-pill', html: ov.ICON.up + 'REACTION' });
-    this.pBos = ov.el(dom, { cls: 's2-bos', html: 'BOS' });
+    this.pBos = ov.el(dom, { cls: 'pill ink s2-pill s2-bos', html: ov.ICON.up + 'BOS' });
   },
 
   // ------------------------------------------------------------------ camera
   camera(t, ctx) {
     const { A, cam } = ctx;
     const E = A.E;
-    let cx = A.kf(t, [[2.45, 3.75], [3.4, 4.05, E.outCubic], [3.92, 4.2, E.inOutSine], [4.3, 4.45, E.outCubic],
-      [4.78, 4.7, E.inOutSine], [5.55, 8.0, E.inOutCubic], [7.42, 8.25, E.inOutSine], [8.15, 8.05, E.inOutCubic], [11.46, 8.15, E.inOutSine]]);
-    let cy = A.kf(t, [[2.45, 7.45], [3.4, 7.6, E.outCubic], [3.92, 7.65, E.inOutSine], [4.3, 7.5, E.outCubic],
-      [4.78, 7.8, E.inOutSine], [5.55, 8.05, E.inOutCubic], [7.42, 7.95, E.inOutSine], [8.15, 8.15, E.inOutCubic], [11.46, 8.1, E.inOutSine]]);
-    const width = A.kf(t, [[2.45, 12.6], [3.92, 12.35, E.inOutSine], [4.3, 11.9, E.outCubic], [4.78, 12.3, E.inOutSine],
-      [5.55, 16.2, E.inOutCubic], [7.42, 15.7, E.inOutSine], [8.15, 17.6, E.inOutCubic], [9.6, 17.3, E.inOutSine],
-      [10.3, 17.5, E.outCubic], [11.46, 16.7, E.inOutSine]]);
-    let pitch = A.kf(t, [[2.45, -12], [5.5, -9], [8.15, -10.5], [11.46, -8.5]]) + A.noise1(t * 0.35, 11) * 0.8;
-    let yaw = A.kf(t, [[2.45, -5], [5.55, 3], [8.15, -2.5], [11.46, 2.5]]) + A.noise1(t * 0.3, 12) * 0.9;
+    // 0-7 form at width ~12.5-13.4; institutions at ~14.4; 0-14 at <= 16.5.
+    // cy sits above the chart centre so the chart fills the main band 700-1420.
+    let cx = A.kf(t, [[2.45, 3.4], [3.6, 3.75, E.outCubic], [3.92, 4.0, E.inOutSine], [4.3, 4.3, E.outCubic],
+      [4.78, 4.85, E.inOutSine], [5.6, 6.7, E.inOutCubic], [7.42, 6.85, E.inOutSine], [8.2, 7.85, E.inOutCubic],
+      [10.4, 7.95, E.inOutSine], [11.46, 8.2, E.inOutSine]]);
+    let cy = A.kf(t, [[2.45, 7.0], [3.6, 7.05, E.outCubic], [3.92, 6.9, E.inOutSine], [4.3, 7.3, E.outCubic],
+      [4.78, 7.6, E.inOutSine], [5.6, 7.65, E.inOutCubic], [7.42, 7.7, E.inOutSine], [8.2, 8.35, E.inOutCubic],
+      [10.4, 8.3, E.inOutSine], [11.46, 8.2, E.inOutSine]]);
+    const width = A.kf(t, [[2.45, 12.4], [3.6, 12.8, E.outCubic], [3.92, 12.45, E.inOutSine], [4.3, 12.9, E.outCubic],
+      [4.78, 13.4, E.inOutSine], [5.6, 14.4, E.inOutCubic], [7.42, 14.25, E.inOutSine], [8.2, 16.5, E.inOutCubic],
+      [9.6, 16.3, E.inOutSine], [10.3, 16.45, E.outCubic], [11.46, 15.9, E.inOutSine]]);
+    let pitch = A.kf(t, [[2.45, -12], [5.6, -10], [8.2, -10.5], [11.46, -8.5]]) + A.noise1(t * 0.35, 11) * 0.8;
+    let yaw = A.kf(t, [[2.45, -4], [5.6, 1.2], [8.2, -2], [11.46, 2]]) + A.noise1(t * 0.3, 12) * 0.9;
     let roll = A.noise1(t * 0.25, 13) * 0.35;
     // arrive still pushing in from the zoom cut, then settle
     let dolly = 1 + 0.5 * (1 - E.outExpo(A.prog(t, 2.45, 3.45)));
-    dolly -= 0.035 * A.hit(t, 9.64, 0.3) + 0.015 * A.hit(t, 5.18, 0.2) + 0.01 * A.hit(t, 3.92, 0.3);
-    // whip right into the cut
-    const w = A.prog(t, 11.46, 11.70) ** 4;
-    cx += 10 * w; yaw += 7 * w; roll -= 1.5 * w;
+    dolly -= 0.035 * A.hit(t, 9.64, 0.3) + 0.015 * A.hit(t, 5.18, 0.2) + 0.01 * A.hit(t, 3.92, 0.3) + 0.02 * A.hit(t, 4.5, 0.3);
+    // whip right into the cut, landing where s3 picks up (cx 15.2, cy 7.35)
+    const w = A.prog(t, 11.46, 11.70) ** 3;
+    cx += 7 * w; cy = A.lerp(cy, 7.35, w); yaw += 7 * w; roll -= 1.5 * w;
     cam.frame({
       cx: cx + A.noise1(t * 0.4, 14) * 0.06, cy: cy + A.noise1(t * 0.37, 15) * 0.05,
       width, pitch, yaw, roll, dolly, fov: 28,
@@ -485,7 +489,7 @@ export default {
     this.pill(ctx, this.pEntry, t, T.entry, 11.30, sEntry);
     const sReact = toScreen(REACT_AT);
     this.pill(ctx, this.pReact, t, 9.76, 11.34, sReact);
-    const sBos = toScreen([3.9, CANDLES[0].h + 0.5, 0.2]);
+    const sBos = toScreen([3.5, CANDLES[0].h + 0.66, 0.2]);
     this.pill(ctx, this.pBos, t, 4.62, 5.45, sBos);
   },
 };

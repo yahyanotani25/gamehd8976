@@ -271,11 +271,13 @@ export default {
     // ============================================================ camera
     const arrive = E.outExpo(A.prog(t, 11.70, 12.40));
     const flipWin = A.window(t, T.role - 0.2, T.land + 0.45, 0.35, 0.5);
-    let cx = A.lerp(15.2, 20.3, arrive)
-      + A.kf(t, [[12.4, 0], [16.4, 0.3, E.inOutSine], [17.45, 0.55, E.inOutCubic], [18, 0.62, E.outSine]]);
-    let cy = A.kf(t, [[11.7, 7.35], [12.4, 6.95, E.outCubic], [13.2, 6.5, E.inOutSine], [16.4, 6.35, E.inOutSine],
-      [17.45, 4.7, E.inOutCubic], [18, 4.45, E.outSine]]);
-    const width = A.kf(t, [[11.7, 15.2], [12.4, 15.9, E.outCubic], [16.4, 15.6, E.inOutSine], [17.45, 17.3, E.inOutCubic], [18, 17.15, E.outSine]]);
+    // frames candles ~11-26; pulls back and follows the drop after the morph so
+    // candles 23-25 fit above the caption band while candle 14 stays under the title
+    let cx = A.lerp(16.2, 18.7, arrive)
+      + A.kf(t, [[12.4, 0], [16.4, 0.3, E.inOutSine], [17.45, 1.3, E.inOutCubic], [18, 1.4, E.outSine]]);
+    let cy = A.kf(t, [[11.7, 7.2], [12.4, 6.85, E.outCubic], [13.2, 6.5, E.inOutSine], [16.4, 6.4, E.inOutSine],
+      [17.45, 5.4, E.inOutCubic], [18, 5.3, E.outSine]]);
+    const width = A.kf(t, [[11.7, 15.2], [12.4, 15.9, E.outCubic], [16.4, 15.7, E.inOutSine], [17.45, 17.8, E.inOutCubic], [18, 17.7, E.outSine]]);
     cx += A.noise1(t * 0.45, 3) * 0.12;
     cy += A.noise1(t * 0.4, 4) * 0.1 - 0.16 * A.hit(t, T.fail, 0.3);
     const pitch = -10 + A.noise1(t * 0.3, 5) * 1.3 - 6 * flipWin;
@@ -443,9 +445,9 @@ export default {
 
     // ============================================================ post FX
     fx.shake = 0.24 * A.hit(t, T.fail, 0.2) + 0.05 * A.hit(t, T.land, 0.12) + 0.04 * A.hit(t, T.reject, 0.12) + 0.06 * A.hit(t, T.morph, 0.14);
-    fx.flash = 0.3 * A.hit(t, T.fail, 0.09, 0.015);
+    fx.flash = 0.24 * A.hit(t, T.fail, 0.09, 0.015);
     fx.flashColor = '#ff2b36';
-    fx.ca = 2.6 * A.hit(t, T.fail, 0.18) + 1.1 * gEnv + 0.8 * A.hit(t, T.morph, 0.15);
+    fx.ca = 2.1 * A.hit(t, T.fail, 0.16) + 0.8 * gEnv + 0.8 * A.hit(t, T.morph, 0.15);
     const imp = toScreen([X(18), ZYM, 0.3]);
     fx.zoom = 0.05 * A.hit(t, T.fail, 0.12);
     fx.zoomC = [imp.x / 1080, 1 - imp.y / 1920];
