@@ -1,0 +1,5 @@
+Smart Money Concepts ko samajhna chahte hain?
+Order Block woh zone hota hai jahan institutions market mein entry le sakte hain, jis ki wajah se price mein reaction aane ka imkaan hota hai.
+Jab yeh block fail ho jata hai aur apna role reverse kar leta hai, toh yeh Breaker Block ban jata hai.
+Order Block potential entry ka signal deta hai, jabke Breaker Block potential reversal ko show karta hai.
+In concepts par mastery hasil karein aur zyada behtar trading decisions lein!
