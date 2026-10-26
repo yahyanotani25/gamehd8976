@@ -1,0 +1,112 @@
+{
+  "box": "us",
+  "projection": "EPSG:3857 (Web Mercator, spherical, R = 6378137 m). Rows run north->south.",
+  "pixel_convention": "area: every image spans exactly the bounds edge-to-edge.",
+  "snapped_to": "zoom 7 tile-pixel grid (global px 4734..10558 x 11007..14283), 5824x3276 z7 px resampled to 4096x2304 (exact 16:9)",
+  "bounds_lonlat": {
+    "west": -127.99072265625001,
+    "south": 22.482106236077673,
+    "east": -64.00634765625001,
+    "north": 50.74340774029213
+  },
+  "bounds_mercator_m": {
+    "west": -14247862.072356854,
+    "south": 2569507.1428344846,
+    "east": -7125154.028630991,
+    "north": 6576030.4174302835
+  },
+  "size_mercator_m": {
+    "width": 7122708.043725863,
+    "height": 4006523.274595799
+  },
+  "layers": {
+    "us_dark": {
+      "files": [
+        "us_dark.png"
+      ],
+      "width": 4096,
+      "height": 2304,
+      "note": "dark stylised contiguous US: Census 1:5M states, Natural Earth 10m land/lakes for context, subtle relief from the terrain tiles"
+    },
+    "us_dark_montana": {
+      "files": [
+        "us_dark_montana.png"
+      ],
+      "width": 4096,
+      "height": 2304,
+      "note": "same with Montana highlighted (crimson fill, bright edge, soft outer glow)"
+    },
+    "montana_mask": {
+      "files": [
+        "montana_mask.png"
+      ],
+      "width": 4096,
+      "height": 2304,
+      "note": "8-bit alpha mask of Montana (antialiased, 3x supersampled); white = Montana"
+    },
+    "montana_outline_mask": {
+      "files": [
+        "montana_outline_mask.png"
+      ],
+      "width": 4096,
+      "height": 2304,
+      "note": "8-bit mask of the Montana border line (~2.3 px wide)"
+    },
+    "us_heightmap": {
+      "files": [
+        "us_heightmap.png",
+        "us_heightmap_u16le.bin"
+      ],
+      "width": 4096,
+      "height": 2304,
+      "source": "AWS Terrain Tiles (terrarium) z7, box-filtered to the render grid",
+      "encoding": "elevation_m = min_m + value / 65535 * (max_m - min_m); includes ocean bathymetry (negative) - clamp at 0 for a land-only relief",
+      "min_m": -6132.0,
+      "max_m": 4274.0,
+      "despiked_pixels": 59,
+      "pixel_size_ground_m_at_center": 1371.1856590445452
+    }
+  },
+  "colours": {
+    "ocean": [
+      9,
+      12,
+      17
+    ],
+    "land_ctx": [
+      19,
+      23,
+      29
+    ],
+    "us": [
+      30,
+      36,
+      44
+    ],
+    "state_line": [
+      66,
+      76,
+      89
+    ],
+    "coast": [
+      92,
+      104,
+      118
+    ],
+    "mt_fill": [
+      116,
+      24,
+      28
+    ],
+    "mt_line": [
+      240,
+      84,
+      64
+    ],
+    "mt_glow": [
+      210,
+      44,
+      36
+    ]
+  }
+}

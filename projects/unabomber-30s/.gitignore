@@ -1,0 +1,11 @@
+node_modules/
+out/
+previews/
+frames/
+*.part*.mkv
+__pycache__/
+# heavy or regenerable inputs (rebuild with tools/map_*.py; depth tests are scratch)
+assets/_depthtest/
+assets/map/**/*.png
+assets/map/**/*.jpg
+assets/map/**/*.bin

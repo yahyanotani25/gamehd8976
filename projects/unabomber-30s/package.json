@@ -1,0 +1,31 @@
+{
+  "name": "unabomber-30s",
+  "version": "1.0.0",
+  "description": "THE UNABOMBER — 30-second cinematic documentary cold open (Three.js + DOM overlay, rendered frame by frame)",
+  "scripts": {
+    "preview": "node render/preview.mjs",
+    "render": "node render/render.mjs",
+    "bench": "node render/bench.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@fontsource-variable/archivo": "^5.3.0",
+    "@fontsource/anton": "^5.3.0",
+    "@fontsource/archivo": "^5.3.0",
+    "@fontsource/archivo-black": "^5.3.0",
+    "@fontsource/bebas-neue": "^5.3.0",
+    "@fontsource/cormorant-garamond": "^5.3.0",
+    "@fontsource/courier-prime": "^5.3.0",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "@fontsource/inter": "^5.3.0",
+    "@fontsource/montserrat": "^5.3.0",
+    "@fontsource/oswald": "^5.3.0",
+    "@fontsource/playfair-display": "^5.3.0",
+    "@fontsource/special-elite": "^5.3.0",
+    "three": "^0.180.0"
+  },
+  "type": "module",
+  "private": true
+}

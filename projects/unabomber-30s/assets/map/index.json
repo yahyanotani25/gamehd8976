@@ -1,0 +1,332 @@
+{
+  "projection": "All rasters are EPSG:3857 Web Mercator (R = 6378137 m), north up. UV origin = top-left.",
+  "lonlat_to_mercator": "x = R * lon_rad ; y = R * ln(tan(pi/4 + lat_rad/2))",
+  "mercator_to_uv": "u = (x - west) / (east - west) ; v = (north - y) / (north - south) ; px = u * width ; py = v * height",
+  "boxes": {
+    "us": {
+      "dir": "us/",
+      "bounds_lonlat": {
+        "west": -127.99072265625001,
+        "south": 22.482106236077673,
+        "east": -64.00634765625001,
+        "north": 50.74340774029213
+      },
+      "bounds_mercator_m": {
+        "west": -14247862.072356854,
+        "south": 2569507.1428344846,
+        "east": -7125154.028630991,
+        "north": 6576030.4174302835
+      },
+      "images": {
+        "us_dark": {
+          "files": [
+            "us_dark.png"
+          ],
+          "width": 4096,
+          "height": 2304
+        },
+        "us_dark_montana": {
+          "files": [
+            "us_dark_montana.png"
+          ],
+          "width": 4096,
+          "height": 2304
+        },
+        "montana_mask": {
+          "files": [
+            "montana_mask.png"
+          ],
+          "width": 4096,
+          "height": 2304
+        },
+        "montana_outline_mask": {
+          "files": [
+            "montana_outline_mask.png"
+          ],
+          "width": 4096,
+          "height": 2304
+        },
+        "us_heightmap": {
+          "files": [
+            "us_heightmap.png",
+            "us_heightmap_u16le.bin"
+          ],
+          "width": 4096,
+          "height": 2304
+        }
+      },
+      "contains": {
+        "wide": {
+          "u0": 0.1980598,
+          "v0": 0.1050824,
+          "u1": 0.2803915,
+          "v1": 0.2148199
+        },
+        "regional": {
+          "u0": 0.2330658,
+          "v0": 0.1526252,
+          "u1": 0.2454177,
+          "v1": 0.1672581
+        },
+        "closeup": {
+          "u0": 0.2386931,
+          "v0": 0.1598248,
+          "u1": 0.2407495,
+          "v1": 0.162386
+        }
+      },
+      "points_uv": {
+        "Lincoln, MT": [
+          0.239401,
+          0.160041
+        ],
+        "Helena, MT": [
+          0.249504,
+          0.174612
+        ],
+        "Missoula, MT": [
+          0.21825,
+          0.163344
+        ],
+        "Great Falls, MT": [
+          0.261025,
+          0.138107
+        ],
+        "Chicago, IL": [
+          0.630825,
+          0.357597
+        ],
+        "Berkeley, CA": [
+          0.089365,
+          0.502859
+        ]
+      }
+    },
+    "wide": {
+      "dir": "wide/",
+      "bounds_lonlat": {
+        "west": -115.3179931640625,
+        "south": 45.59290020826985,
+        "east": -110.050048828125,
+        "north": 48.288675734823855
+      },
+      "bounds_mercator_m": {
+        "west": -12837140.27832564,
+        "south": 5715349.478939198,
+        "east": -12250715.397321768,
+        "north": 6155015.265635533
+      },
+      "images": {
+        "heightmap": {
+          "files": [
+            "heightmap.png",
+            "heightmap_u16le.bin"
+          ],
+          "width": 1918,
+          "height": 1438
+        },
+        "hillshade": {
+          "files": [
+            "hillshade.png"
+          ],
+          "width": 1918,
+          "height": 1438
+        },
+        "imagery": {
+          "files": [
+            "imagery.jpg"
+          ],
+          "width": 7672,
+          "height": 5752
+        },
+        "usgs_shaded_relief": {
+          "files": [
+            "usgs_shaded_relief.jpg"
+          ],
+          "width": 8192,
+          "height": 6142
+        },
+        "usgs_topo": {
+          "files": [
+            "usgs_topo.jpg"
+          ],
+          "width": 3836,
+          "height": 2876
+        },
+        "imagery_grade_night": {
+          "files": [
+            "imagery_grade_night.jpg"
+          ],
+          "width": 7672,
+          "height": 5752
+        }
+      },
+      "contains": {
+        "regional": {
+          "u0": 0.4251825,
+          "v0": 0.4332406,
+          "u1": 0.5752086,
+          "v1": 0.5665855
+        },
+        "closeup": {
+          "u0": 0.4935317,
+          "v0": 0.4988482,
+          "u1": 0.5185089,
+          "v1": 0.5221879
+        }
+      },
+      "points_uv": {
+        "Lincoln, MT": [
+          0.502134,
+          0.500817
+        ],
+        "Helena, MT": [
+          0.624836,
+          0.633603
+        ],
+        "Missoula, MT": [
+          0.245229,
+          0.530914
+        ],
+        "Great Falls, MT": [
+          0.764781,
+          0.300946
+        ]
+      }
+    },
+    "regional": {
+      "dir": "regional/",
+      "bounds_lonlat": {
+        "west": -113.07815551757814,
+        "south": 46.77796299949992,
+        "east": -112.28782653808595,
+        "north": 47.137424646293866
+      },
+      "bounds_mercator_m": {
+        "west": -12587802.692059396,
+        "south": 5905906.990454143,
+        "east": -12499823.672503158,
+        "north": 5964534.191148873
+      },
+      "images": {
+        "heightmap": {
+          "files": [
+            "heightmap.png",
+            "heightmap_u16le.bin"
+          ],
+          "width": 2302,
+          "height": 1534
+        },
+        "hillshade": {
+          "files": [
+            "hillshade.png"
+          ],
+          "width": 2302,
+          "height": 1534
+        },
+        "imagery": {
+          "files": [
+            "imagery.jpg"
+          ],
+          "width": 8192,
+          "height": 5459
+        },
+        "usgs_shaded_relief": {
+          "files": [
+            "usgs_shaded_relief.jpg"
+          ],
+          "width": 4604,
+          "height": 3068
+        },
+        "usgs_topo": {
+          "files": [
+            "usgs_topo.jpg"
+          ],
+          "width": 4604,
+          "height": 3068
+        },
+        "imagery_grade_night": {
+          "files": [
+            "imagery_grade_night.jpg"
+          ],
+          "width": 8192,
+          "height": 5459
+        }
+      },
+      "contains": {
+        "closeup": {
+          "u0": 0.4555821,
+          "v0": 0.4920143,
+          "u1": 0.6220678,
+          "v1": 0.6670469
+        }
+      },
+      "points_uv": {
+        "Lincoln, MT": [
+          0.51292,
+          0.506776
+        ]
+      }
+    },
+    "closeup": {
+      "dir": "closeup/",
+      "bounds_lonlat": {
+        "west": -112.71809577941896,
+        "south": 46.89791503021243,
+        "east": -112.58651733398439,
+        "north": 46.960866137006384
+      },
+      "bounds_mercator_m": {
+        "west": -12547721.025352357,
+        "south": 5925427.096552471,
+        "east": -12533073.77980721,
+        "north": 5935688.767599756
+      },
+      "images": {
+        "heightmap": {
+          "files": [
+            "heightmap.png",
+            "heightmap_u16le.bin"
+          ],
+          "width": 1533,
+          "height": 1074
+        },
+        "hillshade": {
+          "files": [
+            "hillshade.png"
+          ],
+          "width": 1533,
+          "height": 1074
+        },
+        "imagery": {
+          "files": [
+            "imagery.jpg"
+          ],
+          "width": 6132,
+          "height": 4296
+        },
+        "usgs_topo": {
+          "files": [
+            "usgs_topo.jpg"
+          ],
+          "width": 3066,
+          "height": 2148
+        },
+        "imagery_grade_night": {
+          "files": [
+            "imagery_grade_night.jpg"
+          ],
+          "width": 6132,
+          "height": 4296
+        }
+      },
+      "contains": {},
+      "points_uv": {
+        "Lincoln, MT": [
+          0.344401,
+          0.084335
+        ]
+      }
+    }
+  }
+}

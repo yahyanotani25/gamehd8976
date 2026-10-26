@@ -1,0 +1,98 @@
+{
+ "type": "FeatureCollection",
+ "name": "Reference points",
+ "source": "English Wikipedia article coordinates (GNIS-derived), read 2026-10-25",
+ "note": "Lincoln, MT: the production brief uses 46.958, -112.683 (approx. town); Wikipedia gives 46.95556, -112.67278 (~0.8 km apart). The cabin site itself is intentionally NOT given.",
+ "features": [
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Lincoln, MT",
+    "state": "MT",
+    "note": "town nearest Kaczynski's cabin"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -112.67278,
+     46.95556
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Helena, MT",
+    "state": "MT",
+    "note": "Montana state capital, ~63 km SE of Lincoln"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -112.02639,
+     46.59639
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Missoula, MT",
+    "state": "MT",
+    "note": "context city"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -114.02614,
+     46.87436
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Great Falls, MT",
+    "state": "MT",
+    "note": "context city"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -111.28917,
+     47.49167
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Chicago, IL",
+    "state": "IL",
+    "note": "Kaczynski's birthplace (for later use)"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -87.62778,
+     41.88194
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Berkeley, CA",
+    "state": "CA",
+    "note": "UC Berkeley, where Kaczynski taught mathematics 1967-69 (for later use)"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -122.27278,
+     37.87167
+    ]
+   }
+  }
+ ]
+}

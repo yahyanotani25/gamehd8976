@@ -1,0 +1,120 @@
+{
+  "box": "closeup",
+  "projection": "EPSG:3857 (Web Mercator, spherical, R = 6378137 m). Rows run north->south, columns west->east.",
+  "pixel_convention": "area: every image spans exactly the bounds below edge-to-edge; pixel (i, j) covers [west + i*W/width, west + (i+1)*W/width] etc. Pixel centres are at +0.5.",
+  "requested": {
+    "center_lat": 46.9294,
+    "center_lon": -112.6523,
+    "width_km": 10.0,
+    "height_km": 7.0
+  },
+  "snapped_to": "zoom 14 tile-pixel grid (global px 783891..785424 x 1475915..1476989)",
+  "bounds_lonlat": {
+    "west": -112.71809577941896,
+    "south": 46.89791503021243,
+    "east": -112.58651733398439,
+    "north": 46.960866137006384
+  },
+  "bounds_mercator_m": {
+    "west": -12547721.025352357,
+    "south": 5925427.096552471,
+    "east": -12533073.77980721,
+    "north": 5935688.767599756
+  },
+  "size_mercator_m": {
+    "width": 14647.245545146987,
+    "height": 10261.6710472852
+  },
+  "center_lat_of_bounds": 46.92939983198382,
+  "size_ground_km_at_center": {
+    "width": 10.002589629273961,
+    "height": 7.007685102309505,
+    "note": "ground metres = mercator metres * cos(lat); scale varies ~\u00b10.1% north/south edge"
+  },
+  "layers": {
+    "heightmap": {
+      "files": [
+        "heightmap.png",
+        "heightmap_u16le.bin"
+      ],
+      "width": 1533,
+      "height": 1074,
+      "source": "AWS Terrain Tiles (terrarium)",
+      "tile_zoom": 14,
+      "pixel_size_mercator_m": 9.554628535647032,
+      "pixel_size_ground_m_at_center": 6.524846463975148,
+      "encoding": "16-bit unsigned, linear: elevation_m = min_m + value / 65535 * (max_m - min_m). heightmap.png = 16-bit grayscale PNG; heightmap_u16le.bin = the same values as raw little-endian uint16, row-major, width*height, no header.",
+      "min_m": 1367.023,
+      "max_m": 2018.234,
+      "mean_m": 1490.83,
+      "quantum_m": 0.00994,
+      "despiked_pixels": 0,
+      "despike_note": "isolated terrarium spike/pit pixels (> max(40 m, 0.9 px) above/below all 8 neighbours) replaced by the neighbour median"
+    },
+    "hillshade": {
+      "files": [
+        "hillshade.png"
+      ],
+      "width": 1533,
+      "height": 1074,
+      "note": "8-bit hillshade computed from the heightmap (sun azimuth 315 deg, altitude 40 deg, no exaggeration)."
+    },
+    "imagery": {
+      "files": [
+        "imagery.jpg"
+      ],
+      "width": 6132,
+      "height": 4296,
+      "tile_zoom": 16,
+      "native_mosaic_size": [
+        6132,
+        4296
+      ],
+      "resampled": false,
+      "pixel_size_ground_m_at_center": 1.631211615993787,
+      "source": "USGS The National Map - USGSImageryOnly (orthoimagery, USDA NAIP at large scales)"
+    },
+    "usgs_topo": {
+      "files": [
+        "usgs_topo.jpg"
+      ],
+      "width": 3066,
+      "height": 2148,
+      "tile_zoom": 15,
+      "native_mosaic_size": [
+        3066,
+        2148
+      ],
+      "resampled": false,
+      "pixel_size_ground_m_at_center": 3.262423231987574,
+      "source": "USGS The National Map - USGSTopo"
+    },
+    "imagery_grade_night": {
+      "files": [
+        "imagery_grade_night.jpg"
+      ],
+      "width": 6132,
+      "height": 4296,
+      "note": "imagery.jpg colour-graded (tools/map_grade.py): cold, desaturated, darker, matte blacks. Same pixels/bounds as imagery.jpg.",
+      "grade_params": {
+        "saturation": 0.48,
+        "exposure": 0.9,
+        "gamma": 1.08,
+        "contrast": 1.08,
+        "black_lift": 0.03,
+        "shadow_tint": [
+          0.82,
+          0.95,
+          1.14
+        ],
+        "highlight_tint": [
+          0.95,
+          0.99,
+          1.04
+        ]
+      },
+      "tile_zoom": 16,
+      "source": "USGS The National Map - USGSImageryOnly (orthoimagery, USDA NAIP at large scales)"
+    }
+  }
+}

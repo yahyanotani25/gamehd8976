@@ -1,0 +1,135 @@
+{
+  "box": "wide",
+  "projection": "EPSG:3857 (Web Mercator, spherical, R = 6378137 m). Rows run north->south, columns west->east.",
+  "pixel_convention": "area: every image spans exactly the bounds below edge-to-edge; pixel (i, j) covers [west + i*W/width, west + (i+1)*W/width] etc. Pixel centres are at +0.5.",
+  "requested": {
+    "center_lat": 46.958,
+    "center_lon": -112.683,
+    "width_km": 400.0,
+    "height_km": 300.0
+  },
+  "snapped_to": "zoom 9 tile-pixel grid (global px 23550..25468 x 45405..46843)",
+  "bounds_lonlat": {
+    "west": -115.3179931640625,
+    "south": 45.59290020826985,
+    "east": -110.050048828125,
+    "north": 48.288675734823855
+  },
+  "bounds_mercator_m": {
+    "west": -12837140.27832564,
+    "south": 5715349.478939198,
+    "east": -12250715.397321768,
+    "north": 6155015.265635533
+  },
+  "size_mercator_m": {
+    "width": 586424.8810038716,
+    "height": 439665.7866963353
+  },
+  "center_lat_of_bounds": 46.957761346688656,
+  "size_ground_km_at_center": {
+    "width": 400.25687326033074,
+    "height": 300.08831269466015,
+    "note": "ground metres = mercator metres * cos(lat); scale varies ~\u00b12.5% north/south edge"
+  },
+  "layers": {
+    "heightmap": {
+      "files": [
+        "heightmap.png",
+        "heightmap_u16le.bin"
+      ],
+      "width": 1918,
+      "height": 1438,
+      "source": "AWS Terrain Tiles (terrarium)",
+      "tile_zoom": 9,
+      "pixel_size_mercator_m": 305.748113140705,
+      "pixel_size_ground_m_at_center": 208.6845011784834,
+      "encoding": "16-bit unsigned, linear: elevation_m = min_m + value / 65535 * (max_m - min_m). heightmap.png = 16-bit grayscale PNG; heightmap_u16le.bin = the same values as raw little-endian uint16, row-major, width*height, no header.",
+      "min_m": 525.0,
+      "max_m": 3382.0,
+      "mean_m": 1550.55,
+      "quantum_m": 0.0436,
+      "despiked_pixels": 33,
+      "despike_note": "isolated terrarium spike/pit pixels (> max(40 m, 0.9 px) above/below all 8 neighbours) replaced by the neighbour median"
+    },
+    "hillshade": {
+      "files": [
+        "hillshade.png"
+      ],
+      "width": 1918,
+      "height": 1438,
+      "note": "8-bit hillshade computed from the heightmap (sun azimuth 315 deg, altitude 40 deg, no exaggeration)."
+    },
+    "imagery": {
+      "files": [
+        "imagery.jpg"
+      ],
+      "width": 7672,
+      "height": 5752,
+      "tile_zoom": 11,
+      "native_mosaic_size": [
+        7672,
+        5752
+      ],
+      "resampled": false,
+      "pixel_size_ground_m_at_center": 52.17112529462085,
+      "source": "USGS The National Map - USGSImageryOnly (orthoimagery, USDA NAIP at large scales)"
+    },
+    "usgs_shaded_relief": {
+      "files": [
+        "usgs_shaded_relief.jpg"
+      ],
+      "width": 8192,
+      "height": 6142,
+      "tile_zoom": 12,
+      "native_mosaic_size": [
+        15344,
+        11504
+      ],
+      "resampled": true,
+      "pixel_size_ground_m_at_center": 48.85948159916152,
+      "source": "USGS The National Map - USGSShadedReliefOnly (3DEP)"
+    },
+    "usgs_topo": {
+      "files": [
+        "usgs_topo.jpg"
+      ],
+      "width": 3836,
+      "height": 2876,
+      "tile_zoom": 10,
+      "native_mosaic_size": [
+        3836,
+        2876
+      ],
+      "resampled": false,
+      "pixel_size_ground_m_at_center": 104.3422505892417,
+      "source": "USGS The National Map - USGSTopo"
+    },
+    "imagery_grade_night": {
+      "files": [
+        "imagery_grade_night.jpg"
+      ],
+      "width": 7672,
+      "height": 5752,
+      "note": "imagery.jpg colour-graded (tools/map_grade.py): cold, desaturated, darker, matte blacks. Same pixels/bounds as imagery.jpg.",
+      "grade_params": {
+        "saturation": 0.48,
+        "exposure": 0.9,
+        "gamma": 1.08,
+        "contrast": 1.08,
+        "black_lift": 0.03,
+        "shadow_tint": [
+          0.82,
+          0.95,
+          1.14
+        ],
+        "highlight_tint": [
+          0.95,
+          0.99,
+          1.04
+        ]
+      },
+      "tile_zoom": 11,
+      "source": "USGS The National Map - USGSImageryOnly (orthoimagery, USDA NAIP at large scales)"
+    }
+  }
+}
