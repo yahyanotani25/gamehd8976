@@ -1,0 +1,15 @@
+# footage and working files (25 GB of camera originals live on the client's Drive)
+raw
+raw/
+proxy
+proxy/
+out/
+*.part
+*.prefix.h264
+# Mixkit music is fetched on demand (licence covers use in videos, not redistributing the files)
+audio/music/
+__pycache__/
+# the repo is public: the finished reels and covers (client content, event guests'
+# faces) are delivered directly, not committed - remove these lines to commit them
+final/**/*.mp4
+final/**/*_thumbnail.jpg
