@@ -49,6 +49,36 @@ visual, source link) from the transcript; it was delivered privately. In short:
   measured from the original, and the opening keeps its fade from black.
 - **Audio is copied bit for bit** from the original.
 
+## Chapter cards removed (v3)
+
+The client then asked for the seven chapter title cards and the narrator's
+chapter announcements ("Chapter one, …" to "Chapter seven, …") to go.
+`recut_plan.py` finds each announcement in the transcript and the card's
+frames, and drops both together:
+
+- **Picture:** the card's frames (with the dissolves into and out of it) are
+  removed, and the last 12 frames before the card dissolve into the first 12
+  after it. Both sides of every join are clean shots.
+- **Sound:** exactly the same length is removed from the soundtrack, inside
+  the music-only pauses around the announcement, with a 0.6 s equal-power
+  crossfade so the score flows on. No other word is touched; a speech
+  recognition pass over every join (`check_joins.py`) hears the sentences on
+  either side run on with no chapter line in between.
+- The film loses 46.3 s: 23,048 → 21,891 frames (15:22 → 14:35.6).
+  `recut.py` encodes it once from the same first-generation sources as v2,
+  and `verify_recut.py` checks picture and sound sync after every join
+  (`data/verify_recut.log`: every join frame-exact, soundtrack offset 0.0 ms).
+- Kept on purpose: the small gold "INSIDE THE INSECT" heading on the insect
+  anatomy diagram after the old Chapter 4 card. It is the diagram's own label
+  (like its "Tracheae" and "Oxygen delivered" labels), not a chapter card.
+
+v3 is `Documentary_v3_no_chapters.mp4` (1.29 GB, 21,891 frames, CRF 17,
+AAC 320 kbit/s). It was delivered as four byte-exact pieces (`.001`–`.004`)
+plus `scripts/JOIN_VIDEO.bat`: double-clicking it on Windows rebuilds the
+single MP4 and checks its size. On a Mac:
+`cat Documentary_v3_no_chapters.mp4.00{1,2,3,4} > Documentary_v3_no_chapters.mp4`.
+7-Zip's *Combine files* on the `.001` piece does the same.
+
 ## How it was built
 
 All scripts take the working directory `W` as their first argument; they read

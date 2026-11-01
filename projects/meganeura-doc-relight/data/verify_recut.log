@@ -1,0 +1,18 @@
+video frames 21891 duration 875.640000
+audio frames 41049 duration 875.682000
+file 1.29 GB, duration 875.682000
+Ch1: before join PSNR  46.8 dB | after join PSNR  46.3 dB (vs neighbour frame  37.5)
+Ch2: before join PSNR  46.5 dB | after join PSNR  44.9 dB (vs neighbour frame  26.3)
+Ch3: before join PSNR  47.7 dB | after join PSNR  45.9 dB (vs neighbour frame  27.2)
+Ch4: before join PSNR  49.2 dB | after join PSNR  51.2 dB (vs neighbour frame  50.8)
+Ch5: before join PSNR  47.8 dB | after join PSNR  47.0 dB (vs neighbour frame  25.6)
+Ch6: before join PSNR  45.8 dB | after join PSNR  47.3 dB (vs neighbour frame  43.6)
+Ch7: before join PSNR  46.1 dB | after join PSNR  45.9 dB (vs neighbour frame  31.1)
+Ch1: audio 3 s after the join matches the original with correlation 1.000 at offset +0.0 ms
+Ch2: audio 3 s after the join matches the original with correlation 1.000 at offset +0.0 ms
+Ch3: audio 3 s after the join matches the original with correlation 1.000 at offset +0.0 ms
+Ch4: audio 3 s after the join matches the original with correlation 1.000 at offset +0.0 ms
+Ch5: audio 3 s after the join matches the original with correlation 1.000 at offset +0.0 ms
+Ch6: audio 3 s after the join matches the original with correlation 1.000 at offset +0.0 ms
+Ch7: audio 3 s after the join matches the original with correlation 1.000 at offset +0.0 ms
+sheet (972, 1288)
