@@ -93,9 +93,9 @@ delivered as:
   rejoined, all 23,048 decoded frames and the audio match the master exactly).
   Put them back to back on a timeline, or join them with
   `ffmpeg -f concat -safe 0 -i list.txt -c copy Documentary_bright_visuals_v2.mp4`,
-  where `list.txt` lists the four files, one `file '<name>'` per line.
-- `Documentary_bright_visuals_v2_single_file.mp4`: one file for watching or
-  forwarding (two-pass H.264 at about 3 Mbit/s, same audio).
+  where `list.txt` lists the four files, one `file '<name>'` per line
+  (or use LosslessCut → Merge/concatenate files). A smaller re-encoded single
+  file was dropped in favour of the full-quality master.
 
 To rebuild from scratch, download the original and the stock clips named in
 `scripts/plan.py` (`px<id>` = https://www.pexels.com/video/<id>/) into `W/dl/`,
