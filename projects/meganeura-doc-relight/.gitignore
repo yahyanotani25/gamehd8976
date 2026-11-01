@@ -1,0 +1,16 @@
+# Large media stays out of git: the original (2.3 GB), stock clips, intermediates and masters.
+dl/
+work/
+final/
+*.mp4
+*.mkv
+*.mov
+__pycache__/
+
+# Client material stays out of this public repo (delivered privately instead):
+# the client's Drive links, the narration transcript, the shot list that quotes it,
+# and before/after frames of their film.
+data/client_clips_drive.json
+data/transcript.json
+data/shotlist.*
+review/

@@ -1,0 +1,128 @@
+[
+ {
+  "name": "emerge_icbinp",
+  "model": "ICBINP XL",
+  "w": 1344,
+  "h": 768,
+  "steps": 28,
+  "seed": 1234,
+  "cfg": 5.0,
+  "prompt": "nature documentary photograph of a giant prehistoric griffinfly Meganeura with four long transparent veined dragonfly wings gliding out of the shade of tree ferns into a bright beam of golden sunlight, sunlight sparkling on its wings, humid prehistoric swamp forest with tree ferns behind, realistic dragonfly anatomy, sharp focus, 35mm photo",
+  "neg": "cartoon, illustration, painting, drawing, cgi, 3d render, blurry, lowres, watermark, text, logo, deformed, extra wings"
+ },
+ {
+  "name": "emerge_flux",
+  "model": "Flux.1-Schnell fp8 (Compact)",
+  "w": 1344,
+  "h": 768,
+  "steps": 4,
+  "seed": 1234,
+  "cfg": 1.0,
+  "prompt": "nature documentary photograph of a giant prehistoric griffinfly Meganeura with four long transparent veined dragonfly wings gliding out of the shade of tree ferns into a bright beam of golden sunlight, sunlight sparkling on its wings, humid prehistoric swamp forest with tree ferns behind, realistic dragonfly anatomy, sharp focus, 35mm photo"
+ },
+ {
+  "name": "flyover_icbinp",
+  "model": "ICBINP XL",
+  "w": 1344,
+  "h": 768,
+  "steps": 28,
+  "seed": 1234,
+  "cfg": 5.0,
+  "prompt": "nature documentary photograph, low angle looking up, an enormous prehistoric griffinfly with four long transparent veined wings flying above a canopy of giant tree ferns, bright blue sky with white clouds, sunny day, realistic dragonfly anatomy, sharp focus",
+  "neg": "cartoon, illustration, painting, drawing, cgi, 3d render, blurry, lowres, watermark, text, logo, deformed, extra wings"
+ },
+ {
+  "name": "flyover_flux",
+  "model": "Flux.1-Schnell fp8 (Compact)",
+  "w": 1344,
+  "h": 768,
+  "steps": 4,
+  "seed": 1234,
+  "cfg": 1.0,
+  "prompt": "nature documentary photograph, low angle looking up, an enormous prehistoric griffinfly with four long transparent veined wings flying above a canopy of giant tree ferns, bright blue sky with white clouds, sunny day, realistic dragonfly anatomy, sharp focus"
+ },
+ {
+  "name": "swoop_icbinp",
+  "model": "ICBINP XL",
+  "w": 1344,
+  "h": 768,
+  "steps": 28,
+  "seed": 1234,
+  "cfg": 5.0,
+  "prompt": "nature documentary photograph of a giant dragonfly swooping down toward a small flying insect above sunlit swamp vegetation, the sun behind them with warm lens flare, wings glowing translucent in the backlight, prehistoric forest of tree ferns and horsetails, realistic dragonfly anatomy",
+  "neg": "cartoon, illustration, painting, drawing, cgi, 3d render, blurry, lowres, watermark, text, logo, deformed, extra wings"
+ },
+ {
+  "name": "swoop_flux",
+  "model": "Flux.1-Schnell fp8 (Compact)",
+  "w": 1344,
+  "h": 768,
+  "steps": 4,
+  "seed": 1234,
+  "cfg": 1.0,
+  "prompt": "nature documentary photograph of a giant dragonfly swooping down toward a small flying insect above sunlit swamp vegetation, the sun behind them with warm lens flare, wings glowing translucent in the backlight, prehistoric forest of tree ferns and horsetails, realistic dragonfly anatomy"
+ },
+ {
+  "name": "recon_icbinp",
+  "model": "ICBINP XL",
+  "w": 1344,
+  "h": 768,
+  "steps": 28,
+  "seed": 1234,
+  "cfg": 5.0,
+  "prompt": "wide nature documentary photograph of a bright prehistoric Carboniferous wetland, still pools of water reflecting a blue sky, tree ferns, horsetails and tall scale trees, a large dragonfly gliding low over the water, warm sunlight, light haze, highly detailed",
+  "neg": "cartoon, illustration, painting, drawing, cgi, 3d render, blurry, lowres, watermark, text, logo, deformed, extra wings"
+ },
+ {
+  "name": "recon_flux",
+  "model": "Flux.1-Schnell fp8 (Compact)",
+  "w": 1344,
+  "h": 768,
+  "steps": 4,
+  "seed": 1234,
+  "cfg": 1.0,
+  "prompt": "wide nature documentary photograph of a bright prehistoric Carboniferous wetland, still pools of water reflecting a blue sky, tree ferns, horsetails and tall scale trees, a large dragonfly gliding low over the water, warm sunlight, light haze, highly detailed"
+ },
+ {
+  "name": "scaletrees_icbinp",
+  "model": "ICBINP XL",
+  "w": 1344,
+  "h": 768,
+  "steps": 28,
+  "seed": 1234,
+  "cfg": 5.0,
+  "prompt": "nature documentary photograph of a prehistoric Carboniferous swamp forest, very tall straight Lepidodendron scale tree trunks with a diamond scale pattern and small grassy crowns, tree ferns and horsetails below, shallow clear water and moss, bright warm sunlight beaming through, light haze, highly detailed",
+  "neg": "cartoon, illustration, painting, drawing, cgi, 3d render, blurry, lowres, watermark, text, logo, deformed, extra wings"
+ },
+ {
+  "name": "scaletrees_flux",
+  "model": "Flux.1-Schnell fp8 (Compact)",
+  "w": 1344,
+  "h": 768,
+  "steps": 4,
+  "seed": 1234,
+  "cfg": 1.0,
+  "prompt": "nature documentary photograph of a prehistoric Carboniferous swamp forest, very tall straight Lepidodendron scale tree trunks with a diamond scale pattern and small grassy crowns, tree ferns and horsetails below, shallow clear water and moss, bright warm sunlight beaming through, light haze, highly detailed"
+ },
+ {
+  "name": "fossil_icbinp",
+  "model": "ICBINP XL",
+  "w": 1344,
+  "h": 768,
+  "steps": 28,
+  "seed": 1234,
+  "cfg": 5.0,
+  "prompt": "close-up museum photograph of a fossilized giant dragonfly wing impression in a slab of grey shale, fine network of wing veins preserved in the stone, bright soft daylight, shallow depth of field, highly detailed, sharp focus",
+  "neg": "cartoon, illustration, painting, drawing, cgi, 3d render, blurry, lowres, watermark, text, logo, deformed, extra wings"
+ },
+ {
+  "name": "fossil_flux",
+  "model": "Flux.1-Schnell fp8 (Compact)",
+  "w": 1344,
+  "h": 768,
+  "steps": 4,
+  "seed": 1234,
+  "cfg": 1.0,
+  "prompt": "close-up museum photograph of a fossilized giant dragonfly wing impression in a slab of grey shale, fine network of wing veins preserved in the stone, bright soft daylight, shallow depth of field, highly detailed, sharp focus"
+ }
+]
