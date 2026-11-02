@@ -1,23 +1,23 @@
 # Dragon Ball mural: wall printer edit
 
-A 12.8-second vertical video (1080×1920, 30 fps). The client's wall printer
-(the one in **reference 1**) prints the client's Dragon Ball image across the
-whole wall. The shots follow **reference 2** in the same order, with the same
-cut points.
+Reference 1 (the client's own wall-printer video) frame for frame, 29.9 s,
+1080×1920, 30 fps, with its own sound. The balloon artwork it prints is
+replaced by the client's Dragon Ball image. Every shot, every camera move,
+the people walking past, the stripe transition and the reveal are the
+original footage. Only the picture on the wall is new, and it is printed
+exactly where and when the balloons were.
 
 Final files are in `final/`:
 
 | file | what |
 |---|---|
-| `DBZ_Wall_Printer.mp4` | the finished edit |
+| `DBZ_Wall_Printer.mp4` | the finished video |
 | `mural_flat_print_file.jpg` | the client's image made flat (perspective removed): exactly what goes on the wall |
 
 ## How it is made
 
-No AI video or image generation is used. Every frame is the real footage of
-the printer from reference 1. The old balloon print on its wall is replaced
-with the client's image by planar tracking and compositing, so every face and
-line on the wall comes straight from the client's pixels.
+No AI video or image generation is used. Every face and line on the wall
+comes straight from the client's pixels.
 
 1. **Flat print file** (`scripts/art.py`). The client's image is a phone
    screenshot of a photo taken at an angle. The main wall is cropped out and
@@ -32,42 +32,43 @@ line on the wall comes straight from the client's pixels.
    for sub-pixel accuracy. Matching every frame to the same texture means
    there is no drift. Frame to frame, the residual against the real wall is
    0.05–0.85 px (median) across the shots.
-3. **Print head** (`scripts/head.py`). The printer's violet UV light is found
-   in every frame and mapped onto the wall. The printed area follows it: in
-   the time-lapse wide shots it follows the tower along the rail, and in the
-   close-ups it follows the head up or down its column.
-4. **Composite** (`scripts/composite.py`). The image goes onto the wall as
-   ink on white. It is multiplied by the room light measured from the bare
-   wall in the same frame, including the shadows of the head and tower on the
-   strip being printed. The printer, its cables, its screen and the UV light
-   stay in front.
-5. **Edit** (`scripts/segments.py`, `scripts/assemble.py`). The shots are cut
-   to reference 2's timing. The sound is reference 2's audio track.
+3. **Placement** (`scripts/composite2.py`). The whole image sits where the
+   balloon print was. It is as large as it can be while the widest shot
+   still shows all of it, from Frieza to Goku Black. Its height follows from
+   its own 2.16:1 proportions.
+4. **Print progress** (`scripts/head.py`, `scripts/progress.py`). The
+   printer's violet UV light is found in every frame and mapped onto the
+   wall. In the time-lapse wide shots, everything left of the head's column
+   is printed, as in the footage. In the low-angle close-up, a faint
+   first-pass strip (about 35% ink, measured) runs beside the head, as in
+   the footage. From the reveal on, everything is printed.
+5. **Composite** (`scripts/composite2.py`). The old balloon print is wiped
+   off the wall. The room's light on the wall is measured from the bare wall
+   and through the old print, and the image is put on as ink on white under
+   that light, with the shadows of the head and tower. The printer, its
+   cables, its screen, the UV light and the people walking past stay in
+   front; passers-by are found against the nearest frames without them.
+6. **Transition** (`scripts/wipe.py`). Frames 633–677 are a stripe wipe made
+   of skewed copies of the last wide frame and the first reveal frame. Each
+   panel's homography is found and chained with the wall track, then the
+   panel is rendered like any other frame.
+7. **Assembly** (`scripts/assemble2.py`). All 897 frames go out in order,
+   with reference 1's audio.
 
-| # | time | reference 2 shot | taken from reference 1 |
-|---|---|---|---|
-| 1 | 0.00–2.23 | wide, printer finishing Piccolo | time-lapse wide, frames 34–100 |
-| 2 | 2.23–4.00 | close-up, head printing Goku's face | close-up, frames 335–387 (head going down) |
-| 3 | 4.00–5.97 | wide, printing goes on | far wide, frames 470–528 |
-| 4 | 5.97–8.03 | close-up, next figure (Vegeta) | close-up, frames 180–241 (head going up) |
-| 5 | 8.03–9.90 | close-up (Buu) | close-up, frames 388–443 |
-| 6 | 9.90–11.13 | detail of finished print | moving camera, frames 830–866 |
-| 7 | 11.13–12.75 | finished wall | far wide, frames 540–588 |
-
-The mural runs from just under the cornice to just above the floor. Its
-position along the wall is chosen for each shot so that the figure being
-printed is under the head. A real print of a wall this long takes hours,
-with the printer moving along its rail.
+An earlier cut followed reference 2's shot order (`segments.py`,
+`composite.py`, `assemble.py`). Its code is kept, but it is not the
+delivered version.
 
 ## Limits
 
 - The client's image is small: the photo inside the screenshot is 738×484
-  px. Wide shots look sharp, but the close-ups magnify it about 13× and look
-  soft. A larger original of the same photo would fix this; re-run
+  px. At this size on the wall it stays sharp in every shot. A larger
+  original of the same photo would make it sharper still; re-run
   `art.py build` and the render.
-- Reference 1's camera stands close to a tall, narrow wall. At full wall
-  height, no single shot can show the whole mural, which is about 2.16 times
-  as wide as it is tall. The wide shots show about a third of it at a time.
+- Reference 1's wall is tall and narrow, while the mural is about 2.16 times
+  as wide as it is tall. Showing all of it in the wide shots means it covers
+  the middle of the wall, not floor to ceiling. Making it full height would
+  push Frieza and Piccolo out of every shot.
 
 ## Rebuild
 
@@ -92,12 +93,20 @@ python3 track.py trackrange master1 seeds_master1.json 133 133 240 D1   # then D
 # merge tracks_D1/2/3.json into tracks_D.json
 python3 head.py tracks_A_master0.json tracks_B_master0.json tracks_D.json tracks_E0.json tracks_F_master0.json
 python3 art.py aspect && python3 art.py build
-for s in s1_wide s2_goku s3_wide s4_vegeta s5_buu s6_detail s7_final; do python3 composite.py $s; done
-python3 assemble.py ../final/DBZ_Wall_Printer.mp4             # --audio ref1|none to change the sound
+python3 track.py seed master1 128 449
+python3 track.py trackrange master1 seeds_master1.json 128 125 132 C2
+python3 track.py trackrange master1 seeds_master1.json 449 445 453 D4
+python3 track.py trackrange master0 tracks_B_master0.json 34 18 34 B0
+# merge every tracks_*.json into tracks_all.json, then:
+python3 head.py tracks_all.json
+python3 progress.py
+python3 composite2.py 1 897                                   # split into chunks to run in parallel
+python3 wipe.py
+python3 assemble2.py ../final/DBZ_Wall_Printer.mp4
 ```
 
 QA tools: `check.py` draws the tracked wall grid, `checker.py` makes a
 checkerboard of frame vs. texture, and `qa.py` scores alignment.
 
-The sound effects in `/sfx` were not used. Reference 2's own track already
-carries the edit.
+The sound effects in `/sfx` were not used, because the video keeps
+reference 1's own sound.

@@ -150,6 +150,14 @@ def shading(fr_lin, fr_bgr, fg_hard, wallm, exclude=None):
         m &= ex == 0
     m = m.astype(np.float32)
     m = cv2.erode(m, np.ones((3, 3), np.uint8))
+    # drop samples whose tint differs from the surrounding wall's (faint
+    # wisps of old print): compare chromaticity with a coarse estimate
+    den0 = cv2.GaussianBlur(m, (0, 0), 40) + 1e-6
+    coarse = np.stack([cv2.GaussianBlur(small[..., c] * m, (0, 0), 40) for c in range(3)], 2) / den0[..., None]
+    chr_s = small / np.maximum(small.sum(2, keepdims=True), 1e-4)
+    chr_c = coarse / np.maximum(coarse.sum(2, keepdims=True), 1e-4)
+    off = np.abs(chr_s - chr_c).max(2)
+    m = m * (off < 0.03)
     S = None
     for sig in (90, 30, 10, 3.5):
         den = cv2.GaussianBlur(m, (0, 0), sig) + 1e-6
@@ -180,7 +188,13 @@ def master_art_mask(master, valid):
     art = (hsv[..., 1] > 28) | (g < 0.86 * white) | (sd > 4.5)
     art = art & (valid > 0)
     art = cv2.morphologyEx(art.astype(np.uint8), cv2.MORPH_CLOSE, np.ones((25, 25), np.uint8))
-    art = cv2.dilate(art, np.ones((21, 21), np.uint8))
+    # everything inside the print's outline counts, plus a generous margin
+    inv = (1 - art).astype(np.uint8)
+    n, lab, st, _ = cv2.connectedComponentsWithStats(inv, connectivity=4)
+    holes = np.zeros(n, np.uint8)
+    holes[1:] = st[1:, cv2.CC_STAT_AREA] < 200000
+    art = np.maximum(art, holes[lab])
+    art = cv2.dilate(art, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (45, 45)))
     # the old print only ever covered the wall band
     art[:CV, :] = 0
     return art
