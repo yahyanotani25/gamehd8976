@@ -31,18 +31,26 @@ of wall the camera sees, so the visible part is Piccolo, Super Saiyan Goku
 of the mural's width) slides the mural left or right. The print does not
 stretch or squash the art.
 
-The client approved the edit and asked to remove 4–9 s, where the start of
-the close-up looked like paper lifting off the wall. The delivered video
-skips 4.37–9.9 s of the edit (frames 131–296) in the picture only. The
-soundtrack is the reference music, uncut, from the start. The music ends on
-its own at about 22.8 s, so the whole tune fits in the 24.3 s video. To
-rebuild it from the frames:
+The client approved the edit and then asked for two cuts:
+
+1. Remove 4–9 s, where the start of the close-up looked like paper lifting
+   off the wall. This drops edit frames 131–296 (4.37–9.9 s).
+2. In that shortened video, remove a further 5–8 s. This drops edit frames
+   316–405, a jump cut inside the close-up.
+
+The delivered video (21.3 s) is edit frames 0–130, 297–315 and 406–895. The
+soundtrack is the reference music, uncut, from the start, with a 1.1 s fade
+at the end, because the video now ends just before the music's own ending
+(22.8 s). To rebuild it from the frames:
 
 ```
-ffmpeg -framerate 30 -i work/frames/%04d.png -framerate 30 -start_number 297 -i work/frames/%04d.png \
-  -filter_complex "[0:v]trim=end_frame=131,setpts=PTS-STARTPTS[v0];[1:v]setpts=PTS-STARTPTS[v1];\
-[v0][v1]concat=n=2:v=1:a=0[v]" -map "[v]" -c:v libx264 -crf 16 -pix_fmt yuv420p cut.mp4
-ffmpeg -i cut.mp4 -i reference/reference.mp4 -map 0:v -map 1:a -c copy -t 24.333333 final/DBZ_Wall_Print_final.mp4
+ffmpeg -framerate 30 -i work/frames/%04d.png \
+  -framerate 30 -start_number 297 -i work/frames/%04d.png \
+  -framerate 30 -start_number 406 -i work/frames/%04d.png -i reference/reference.mp4 \
+  -filter_complex "[0:v]trim=end_frame=131,setpts=PTS-STARTPTS[v0];[1:v]trim=end_frame=19,setpts=PTS-STARTPTS[v1];\
+[2:v]setpts=PTS-STARTPTS[v2];[v0][v1][v2]concat=n=3:v=1:a=0[v];\
+[3:a]atrim=end=21.333333,asetpts=PTS-STARTPTS,afade=t=out:st=20.233333:d=1.1[a]" \
+  -map "[v]" -map "[a]" -c:v libx264 -crf 16 -pix_fmt yuv420p -c:a aac -b:a 192k final/DBZ_Wall_Print_final.mp4
 ```
 
 Seven single frames in the two timelapses showed people walking through
@@ -53,7 +61,7 @@ it.
 
 | path | what |
 |---|---|
-| `final/DBZ_Wall_Print_final.mp4` | **the delivered video** (24.3 s): the approved edit with 4.37–9.9 s of picture cut out, original music uncut |
+| `final/DBZ_Wall_Print_final.mp4` | **the delivered video** (21.3 s): the approved edit with the client's two cuts, original music from the start |
 | `final/DBZ_Wall_Print.mp4` | the approved edit before the cut (29.9 s) |
 | `art/source_photo.jpg` | the client's photo of the mural (input) |
 | `art/dbz_mural_print_file.jpg` | the mural as a flat print file: perspective removed, 4× anime upscale (Real-ESRGAN x4plus_anime_6B), photo lighting flattened (5874×2400) |
