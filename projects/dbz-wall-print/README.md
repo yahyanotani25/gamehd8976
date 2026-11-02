@@ -33,17 +33,16 @@ stretch or squash the art.
 
 The client approved the edit and asked to remove 4–9 s, where the start of
 the close-up looked like paper lifting off the wall. The delivered video
-skips 4.37–9.9 s of the edit (frames 131–296). That is exactly 16 beats of
-the 172 BPM soundtrack, so the music carries on in rhythm. There is a 10 ms
-fade at the audio join. To rebuild it from the frames:
+skips 4.37–9.9 s of the edit (frames 131–296) in the picture only. The
+soundtrack is the reference music, uncut, from the start. The music ends on
+its own at about 22.8 s, so the whole tune fits in the 24.3 s video. To
+rebuild it from the frames:
 
 ```
 ffmpeg -framerate 30 -i work/frames/%04d.png -framerate 30 -start_number 297 -i work/frames/%04d.png \
-  -i reference/reference.mp4 -filter_complex "[0:v]trim=end_frame=131,setpts=PTS-STARTPTS[v0];\
-[1:v]setpts=PTS-STARTPTS[v1];[v0][v1]concat=n=2:v=1:a=0[v];\
-[2:a]atrim=end=4.366667,asetpts=PTS-STARTPTS,afade=t=out:st=4.356667:d=0.01[a0];\
-[2:a]atrim=start=9.9,asetpts=PTS-STARTPTS,afade=t=in:st=0:d=0.01[a1];[a0][a1]concat=n=2:v=0:a=1[a]" \
-  -map "[v]" -map "[a]" -c:v libx264 -crf 16 -pix_fmt yuv420p -c:a aac -b:a 192k final/DBZ_Wall_Print_final.mp4
+  -filter_complex "[0:v]trim=end_frame=131,setpts=PTS-STARTPTS[v0];[1:v]setpts=PTS-STARTPTS[v1];\
+[v0][v1]concat=n=2:v=1:a=0[v]" -map "[v]" -c:v libx264 -crf 16 -pix_fmt yuv420p cut.mp4
+ffmpeg -i cut.mp4 -i reference/reference.mp4 -map 0:v -map 1:a -c copy -t 24.333333 final/DBZ_Wall_Print_final.mp4
 ```
 
 Seven single frames in the two timelapses showed people walking through
@@ -54,7 +53,7 @@ it.
 
 | path | what |
 |---|---|
-| `final/DBZ_Wall_Print_final.mp4` | **the delivered video** (24.3 s): the approved edit with 4.37–9.9 s cut out |
+| `final/DBZ_Wall_Print_final.mp4` | **the delivered video** (24.3 s): the approved edit with 4.37–9.9 s of picture cut out, original music uncut |
 | `final/DBZ_Wall_Print.mp4` | the approved edit before the cut (29.9 s) |
 | `art/source_photo.jpg` | the client's photo of the mural (input) |
 | `art/dbz_mural_print_file.jpg` | the mural as a flat print file: perspective removed, 4× anime upscale (Real-ESRGAN x4plus_anime_6B), photo lighting flattened (5874×2400) |
