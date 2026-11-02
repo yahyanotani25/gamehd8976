@@ -93,21 +93,73 @@ def kf(keys, p, ease='inout'):
     return keys[-1][1]
 
 
+# ----------------------------------------------------------------- sources
+_info_cache = {}
+
+
+def source_info(clip):
+    """Working size, frame rate and orientation of a clip, read from the file itself
+    (the expo clips are 1920x1080 at 100p; the store-event clips are 4K Sony at 25 or
+    29.97p and vertical DJI Pocket clips). Rotation metadata is applied by ffmpeg on
+    decode, so a rotated clip reports its displayed (rotated) size. Frames taller than
+    2160 px are scaled down to 2160 on decode."""
+    if clip in _info_cache:
+        return _info_cache[clip]
+    path = clip_path(clip)
+    meta = path + '.info.json'
+    if os.path.exists(meta):
+        info = json.load(open(meta))
+    else:
+        r = subprocess.run(['ffprobe', '-v', 'error', '-select_streams', 'v:0', '-show_entries',
+                            'stream=width,height,avg_frame_rate,r_frame_rate:stream_side_data=rotation:'
+                            'stream_tags=rotate', '-of', 'json', path], capture_output=True, text=True)
+        st = json.loads(r.stdout)['streams'][0]
+        w, h = st['width'], st['height']
+        rot = 0
+        for sd in st.get('side_data_list', []) or []:
+            if 'rotation' in sd:
+                rot = int(sd['rotation'])
+        rot = rot or int(st.get('tags', {}).get('rotate', 0) or 0)
+        if abs(rot) % 180 == 90:
+            w, h = h, w
+        num, den = (st.get('avg_frame_rate') or st['r_frame_rate']).split('/')
+        fps = float(num) / float(den or 1)
+        if fps <= 0 or fps > 400:
+            num, den = st['r_frame_rate'].split('/')
+            fps = float(num) / float(den or 1)
+        info = dict(w=w, h=h, fps=fps, rot=rot)
+        try:
+            json.dump(info, open(meta, 'w'))
+        except OSError:
+            pass
+    k = min(1.0, 2160.0 / max(info['h'], 1)) if info['h'] > 2160 else 1.0
+    out = dict(info, ww=int(round(info['w'] * k / 2)) * 2, wh=int(round(info['h'] * k / 2)) * 2)
+    _info_cache[clip] = out
+    return out
+
+
 # ----------------------------------------------------------------- decode
 class Reader:
-    """Sequential decoder for one clip from stored frame f_start, LUT applied by ffmpeg."""
+    """Sequential decoder for one clip from stored frame f_start. ffmpeg applies the
+    clip's own correction (`pre`, e.g. white balance), then the reference-look LUT."""
 
-    def __init__(self, path, f_start, lut=LUT):
+    def __init__(self, path, f_start, lut=LUT, size=(SW, SH), fps=SFPS, pre=None):
         self.f_start = max(0, int(f_start))
-        cmd = ['ffmpeg', '-v', 'error', '-threads', '3', '-ss', f'{self.f_start / SFPS:.5f}', '-i', path,
+        self.w, self.h = size
+        cmd = ['ffmpeg', '-v', 'error', '-threads', '3', '-ss', f'{self.f_start / fps:.5f}', '-i', path,
                '-map', '0:v:0']
+        vf = []
+        if pre:
+            vf.append(pre)
         if lut:
-            cmd += ['-vf', f"lut3d=file='{lut}':interp=tetrahedral"]
+            vf.append(f"lut3d=file='{lut}':interp=tetrahedral")
+        vf.append(f'scale={self.w}:{self.h}:flags=lanczos')
+        cmd += ['-vf', ','.join(vf)]
         cmd += ['-f', 'rawvideo', '-pix_fmt', 'bgr24', '-']
         self.proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, bufsize=1 << 24)
         self.next = self.f_start
         self.cache = collections.OrderedDict()
-        self.size = SW * SH * 3
+        self.size = self.w * self.h * 3
         self.eof = False
 
     def get(self, f):
@@ -117,7 +169,7 @@ class Reader:
             if len(buf) < self.size:
                 self.eof = True
                 break
-            self.cache[self.next] = np.frombuffer(buf, np.uint8).reshape(SH, SW, 3)
+            self.cache[self.next] = np.frombuffer(buf, np.uint8).reshape(self.h, self.w, 3)
             self.next += 1
             while len(self.cache) > 10:
                 self.cache.popitem(last=False)
@@ -135,14 +187,26 @@ class Reader:
 
 
 class ProxyReader:
-    """Preview stand-in for Reader: decodes the 640x360 25 fps review proxy (one frame per
-    4 stored frames) and upsizes it, so edits can be checked before fetching originals."""
+    """Preview stand-in for Reader: decodes a small review proxy and upsizes it, so edits
+    can be checked before (or without) touching the originals.
 
-    def __init__(self, path, f_start, lut=LUT):
+    Expo proxies are 640x360 at 25 fps, one frame per 4 stored frames of the 100p
+    originals. Store-event proxies keep the source frame rate (640 px long side) and
+    carry a <proxy>.src.json with the original's geometry (see proxy_geometry)."""
+
+    def __init__(self, path, f_start, lut=LUT, pre=None, size=(SW, SH), sfps=SFPS):
         self.f_start = max(0, int(f_start))
-        cmd = ['ffmpeg', '-v', 'error', '-ss', f'{self.f_start / SFPS:.5f}', '-i', path, '-map', '0:v:0']
-        if lut:
-            cmd += ['-vf', f"lut3d=file='{lut}'"]
+        r = subprocess.run(['ffprobe', '-v', 'error', '-select_streams', 'v:0', '-show_entries',
+                            'stream=width,height,avg_frame_rate', '-of', 'csv=p=0', path],
+                           capture_output=True, text=True).stdout.split(',')
+        self.pw, self.ph = int(r[0]), int(r[1])
+        num, den = r[2].strip().split('/')
+        self.ratio = sfps / (float(num) / float(den or 1))  # stored frames per proxy frame
+        self.size = size
+        cmd = ['ffmpeg', '-v', 'error', '-ss', f'{self.f_start / sfps:.5f}', '-i', path, '-map', '0:v:0']
+        vf = ([pre] if pre else []) + ([f"lut3d=file='{lut}'"] if lut else [])
+        if vf:
+            cmd += ['-vf', ','.join(vf)]
         cmd += ['-f', 'rawvideo', '-pix_fmt', 'bgr24', '-']
         self.proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, bufsize=1 << 22)
         self.q_next = 0
@@ -150,14 +214,15 @@ class ProxyReader:
         self.eof = False
 
     def get(self, f):
-        q = max(0, int(round((int(f) - self.f_start) / 4.0)))
+        q = max(0, int(round((int(f) - self.f_start) / self.ratio)))
+        n = self.pw * self.ph * 3
         while self.q_next <= q and not self.eof:
-            buf = self.proc.stdout.read(640 * 360 * 3)
-            if len(buf) < 640 * 360 * 3:
+            buf = self.proc.stdout.read(n)
+            if len(buf) < n:
                 self.eof = True
                 break
-            small = np.frombuffer(buf, np.uint8).reshape(360, 640, 3)
-            self.cache[self.q_next] = cv2.resize(small, (SW, SH), interpolation=cv2.INTER_LINEAR)
+            small = np.frombuffer(buf, np.uint8).reshape(self.ph, self.pw, 3)
+            self.cache[self.q_next] = cv2.resize(small, self.size, interpolation=cv2.INTER_LINEAR)
             self.q_next += 1
             while len(self.cache) > 4:
                 self.cache.popitem(last=False)
@@ -173,11 +238,32 @@ class ProxyReader:
             pass
 
 
-def open_reader(clip, f_start):
+def proxy_path(clip):
     prx = os.environ.get('AIRA_PROXY_DIR')
+    p = os.path.join(prx, clip + '.mp4') if prx else None
+    return p if p and os.path.exists(p) else None
+
+
+def proxy_geometry(clip):
+    """(working w, working h, source fps) that a proxy stands in for. Store-event proxies
+    record the original in <proxy>.src.json; the size is capped at 1920 px on the long
+    side for previews (framing is fractional, so composition is unchanged). Expo
+    proxies have none: 1920x1080 at 100p."""
+    meta = proxy_path(clip) + '.src.json'
+    if not os.path.exists(meta):
+        return SW, SH, SFPS
+    i = json.load(open(meta))
+    k = min(1.0, 1920.0 / max(i['w'], i['h']))
+    return int(round(i['w'] * k / 2)) * 2, int(round(i['h'] * k / 2)) * 2, i['fps']
+
+
+def open_reader(clip, f_start, pre=None, lut=LUT):
+    prx = proxy_path(clip)
     if prx:
-        return ProxyReader(os.path.join(prx, clip + '.mp4'), f_start)
-    return Reader(clip_path(clip), f_start)
+        sw, sh, sfps = proxy_geometry(clip)
+        return ProxyReader(prx, f_start, lut=lut, pre=pre, size=(sw, sh), sfps=sfps)
+    info = source_info(clip)
+    return Reader(clip_path(clip), f_start, lut=lut, size=(info['ww'], info['wh']), fps=info['fps'], pre=pre)
 
 
 def blend(frames):
@@ -189,23 +275,24 @@ def blend(frames):
     return (acc // len(frames)).astype(np.uint8)
 
 
-def reframe_matrix(cx, cy, z, rot):
-    """Affine source->output for a 9:16 window centred on (cx, cy) in 1920x1080 source
-    pixels. z=1 fills the output height with the full source height. Clamped so the
-    window never leaves the source frame (no borders)."""
+def reframe_matrix(cx, cy, z, rot, sw=SW, sh=SH):
+    """Affine source->output for a 9:16 window centred on (cx, cy) in source pixels of an
+    sw x sh frame. z=1 is the smallest scale that fills the output (full height for a
+    landscape source, full frame for a vertical one). Clamped so the window never leaves
+    the source frame (no borders)."""
     a = math.radians(rot)
     ca, sa = abs(math.cos(a)), abs(math.sin(a))
-    s = (H / SH) * z
+    s = max(H / sh, W / sw) * z
     # half extents of the rotated output window, measured in source pixels
     hx = (W / 2 * ca + H / 2 * sa) / s
     hy = (W / 2 * sa + H / 2 * ca) / s
-    if hy > SH / 2 or hx > SW / 2:  # zoom in just enough to stay inside
-        k = max(hy / (SH / 2), hx / (SW / 2)) * 1.002
+    if hy > sh / 2 or hx > sw / 2:  # zoom in just enough to stay inside
+        k = max(hy / (sh / 2), hx / (sw / 2)) * 1.002
         s *= k
         hx /= k
         hy /= k
-    cx = min(max(cx, hx), SW - hx)
-    cy = min(max(cy, hy), SH - hy)
+    cx = min(max(cx, hx), sw - hx)
+    cy = min(max(cy, hy), sh - hy)
     c, si = math.cos(a) * s, math.sin(a) * s
     return np.array([[c, -si, W / 2 - c * cx + si * cy],
                      [si, c, H / 2 - si * cx - c * cy]], np.float32)
@@ -381,15 +468,18 @@ class Shot:
     footage = True
 
     def __init__(self, clip, t_in, dur, speed=1.0, frame=None, ease='linear', shutter=0.5, fx=None,
-                 note=''):
+                 note='', pre=None, lut=LUT):
+        """pre: per-clip ffmpeg filter applied before the look LUT (e.g. white balance).
+        Framing (cx, cy) values <= 1.0 are fractions of the working frame size."""
         self.clip, self.t_in, self.dur = clip, float(t_in), float(dur)
         self.n = int(round(self.dur * FPS))
         self.speed = speed
-        self.frame = frame or [(0.0, (960.0, 540.0, 1.0, 0.0))]
+        self.frame = frame or [(0.0, (0.5, 0.5, 1.0, 0.0))]
         self.ease = ease
         self.shutter = shutter
         self.fx = fx or []
         self.note = note
+        self.pre, self.lut = pre, lut
         self.reader = None
 
     def speed_at(self, t):
@@ -398,22 +488,27 @@ class Shot:
         return kf(self.speed, t, 'linear') if len(self.speed) > 1 else self.speed[0][1]
 
     def prepare(self, pre, post):
-        self.pre = pre
+        self.npre = pre
+        if proxy_path(self.clip):
+            self.sw, self.sh, self.sfps = proxy_geometry(self.clip)
+        else:
+            info = source_info(self.clip)
+            self.sw, self.sh, self.sfps = info['ww'], info['wh'], info['fps']
         us = np.arange(-pre, self.n + post + 1)
         sp = np.array([self.speed_at(u / FPS) for u in us])
-        # integrate speed (stored frames per output frame = speed * SFPS / FPS)
-        step = sp * SFPS / FPS
+        # integrate speed (stored frames per output frame = speed * source fps / FPS)
+        step = sp * self.sfps / FPS
         pos = np.concatenate([[0.0], np.cumsum((step[1:] + step[:-1]) / 2)])
         zero = pos[pre]
-        self.pos = self.t_in * SFPS + (pos - zero)
+        self.pos = self.t_in * self.sfps + (pos - zero)
         self.step = step
         first = max(0.0, float(self.pos.min()))
-        self.reader = open_reader(self.clip, math.floor(first))
+        self.reader = open_reader(self.clip, math.floor(first), pre=self.pre, lut=self.lut)
 
     def render(self, u):
         if getattr(self, '_last', None) is not None and self._last[0] == u:
             return self._last[1]
-        i = u + self.pre
+        i = u + self.npre
         pos = max(0.0, float(self.pos[i]))
         span = self.shutter * float(self.step[i])
         if span < 1.0:
@@ -424,7 +519,10 @@ class Shot:
             img = blend([self.reader.get(f0 + j) for j in range(k)])
         p = u / max(1, self.n - 1)
         cx, cy, z, rot = kf(self.frame, p, self.ease)
-        out = cv2.warpAffine(img, reframe_matrix(cx, cy, z, rot), (W, H), flags=cv2.INTER_LANCZOS4,
+        sh_, sw_ = img.shape[:2]
+        cx = cx * sw_ if cx <= 1.0 else cx
+        cy = cy * sh_ if cy <= 1.0 else cy
+        out = cv2.warpAffine(img, reframe_matrix(cx, cy, z, rot, sw_, sh_), (W, H), flags=cv2.INTER_LANCZOS4,
                              borderMode=cv2.BORDER_REFLECT101)
         out = sharpen(out)
         if not hasattr(self, 'hist'):

@@ -3,6 +3,8 @@ raw
 raw/
 proxy
 proxy/
+raw2
+proxy2
 out/
 *.part
 *.prefix.h264
