@@ -13,3 +13,4 @@ __pycache__/
 # faces) are delivered directly, not committed - remove these lines to commit them
 final/**/*.mp4
 final/**/*_thumbnail.jpg
+final/*.zip

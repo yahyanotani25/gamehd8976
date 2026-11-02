@@ -3,14 +3,14 @@ them: http://127.0.0.1:PORT/<drive file id> -> drive.usercontent.google.com.
 
 Drive answers open-ended ranges ("bytes=X-", what ffmpeg sends) and plain GETs of big
 files with an HTML page, but serves closed ranges reliably, so every request is
-served as a stream of closed 4 MB range fetches (retried), stopping when ffmpeg
+served as a stream of closed range fetches (RELAY_CHUNK bytes, default 1 MB; retried), stopping when ffmpeg
 hangs up.   usage: drive_relay.py [port]"""
 import http.server, re, socketserver, sys, threading, time
 import requests
 
 PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 8765
 URL = 'https://drive.usercontent.google.com/download?id={}&export=download&confirm=t'
-CHUNK = 4 << 20
+CHUNK = int(__import__("os").environ.get("RELAY_CHUNK", 1 << 20))
 _local = threading.local()
 _sizes = {}
 
