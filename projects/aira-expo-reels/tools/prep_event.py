@@ -123,7 +123,8 @@ def main():
             wb[clip] = wb_gains(fr[::max(1, len(fr) // 8)])
             cv2.imwrite(sp, sheet(fr, [f'{clip} {i}s' for i in range(len(fr))]), [cv2.IMWRITE_JPEG_QUALITY, 80])
         print(clip, f"{info['w']}x{info['h']} {info['fps']:.2f}fps", wb[clip], flush=True)
-    json.dump(wb, open(wbj, 'w'), indent=0, sort_keys=True)
+    if wb:  # nothing on disk yet: leave no empty file behind
+        json.dump(wb, open(wbj, 'w'), indent=0, sort_keys=True)
 
 
 if __name__ == '__main__':
