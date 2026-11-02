@@ -110,36 +110,67 @@ def mdat_start(m):
         i += sz
 
 
-def rebuild(m, seconds, ps, h264_path):
+def parse_gops(m, seconds):
+    """List of GOPs, each a list of the GOP's NAL units (camera order)."""
     q = mdat_start(m)
-    gops_needed = int(seconds / 0.48) + 2
-    with open(h264_path, 'wb') as f:
-        f.write(b''.join(b'\x00\x00\x00\x01' + p for p in ps))
-        for g in range(gops_needed):
-            if not m.ensure(q + RTMD + 16):
-                return g
-            assert m.buf[q:q + 4] == SIG and m.buf[q + 19456:q + 19460] == SIG, f'rtmd signature missing at GOP {g}'
-            q += RTMD
-            aus = 0
-            nals = []
-            while True:
-                if not m.ensure(q + 8):
-                    return g
-                L = struct.unpack('>I', m.buf[q:q + 4])[0]
-                t = m.buf[q + 4] & 0x1f
-                if t == 9:
-                    if aus == GOP:
-                        raise ValueError('more than 48 access units in a GOP chunk')
-                    aus += 1
-                m.ensure(q + 4 + L + AUDIO + 8)
-                nals.append(bytes(m.buf[q + 4:q + 4 + L]))
-                q += 4 + L
-                if aus == GOP and m.buf[q + AUDIO:q + AUDIO + 4] == SIG \
-                        and m.buf[q + AUDIO + 19456:q + AUDIO + 19460] == SIG:
-                    break
-            f.write(b''.join(b'\x00\x00\x00\x01' + n for n in nals))
-            q += AUDIO
-    return gops_needed
+    gops = []
+    for g in range(int(seconds / 0.48) + 2):
+        if not m.ensure(q + RTMD + 16):
+            break
+        assert m.buf[q:q + 4] == SIG and m.buf[q + 19456:q + 19460] == SIG, f'rtmd signature missing at GOP {g}'
+        q += RTMD
+        aus, nals, done = 0, [], False
+        while True:
+            if not m.ensure(q + 8):
+                done = True
+                break
+            L = struct.unpack('>I', m.buf[q:q + 4])[0]
+            if (m.buf[q + 4] & 0x1f) == 9:
+                if aus == GOP:
+                    raise ValueError('more than 48 access units in a GOP chunk')
+                aus += 1
+            m.ensure(q + 4 + L + AUDIO + 8)
+            nals.append(bytes(m.buf[q + 4:q + 4 + L]))
+            q += 4 + L
+            if aus == GOP and m.buf[q + AUDIO:q + AUDIO + 4] == SIG \
+                    and m.buf[q + AUDIO + 19456:q + AUDIO + 19460] == SIG:
+                break
+        if done:
+            break
+        gops.append(nals)
+        q += AUDIO
+    return gops
+
+
+def write_annexb(gops, ps, path):
+    """Parameter sets go inside each GOP's first (IDR) access unit, after the AUD and
+    SEI and before the first slice - the camera's own order."""
+    with open(path, 'wb') as f:
+        for nals in gops:
+            first = next(i for i, n in enumerate(nals) if (n[0] & 0x1f) in (1, 5))
+            f.write(b''.join(b'\x00\x00\x00\x01' + n for n in nals[:first] + list(ps) + nals[first:]))
+
+
+def decodable(path):
+    r = subprocess.run(['ffprobe', '-v', 'error', '-f', 'h264', '-count_frames', '-select_streams', 'v:0',
+                        '-show_entries', 'stream=nb_read_frames', '-of', 'csv=p=0', path], capture_output=True, text=True)
+    try:
+        return int(r.stdout.strip())
+    except ValueError:
+        return 0
+
+
+def pick_param_sets(gops, candidates, tmp):
+    """Parameter-set groups differ in how many PPS they carry (2-4) and later GOPs may
+    use a PPS the first ones don't, so test every GOP; ties go to the bigger set."""
+    best = (-1, None)
+    for ps in sorted(candidates, key=len, reverse=True):
+        write_annexb(gops, ps, tmp)
+        n = decodable(tmp)
+        if n > best[0]:
+            best = (n, ps)
+    os.remove(tmp)
+    return best[1], best[0]
 
 
 def remux(h264_path, mp4_path):
@@ -159,14 +190,14 @@ def remux(h264_path, mp4_path):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('--ref', required=True)
+    ap.add_argument('--ref', required=True, nargs='+', help='complete clips whose SPS/PPS are candidates')
     ap.add_argument('--entries')
     ap.add_argument('--local')
     ap.add_argument('--out', required=True)
     ap.add_argument('clips', nargs='+')
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
-    ps = ref_param_sets(a.ref)
+    cands = [ref_param_sets(r) for r in a.ref]
     entries = {os.path.basename(e['name']): e for e in json.load(open(a.entries))} if a.entries else {}
     for spec in a.clips:
         clip, secs = spec.split(':')
@@ -174,7 +205,12 @@ def main():
         t0 = time.time()
         m = LocalMember(a.local) if a.local else RemoteMember(entries[clip + '.MP4'])
         h264 = os.path.join(a.out, clip + '.prefix.h264')
-        g = rebuild(m, secs, ps, h264)
+        gops = parse_gops(m, secs)
+        ps, n = pick_param_sets(gops, cands, h264 + '.test')
+        if n < GOP * len(gops) - 2:
+            raise RuntimeError(f'{clip}: no candidate SPS/PPS decodes all frames ({n} of {GOP * len(gops)})')
+        write_annexb(gops, ps, h264)
+        g = len(gops)
         mp4 = os.path.join(a.out, clip + '.MP4')
         remux(h264, mp4 + '.tmp.mp4')
         os.replace(mp4 + '.tmp.mp4', mp4)

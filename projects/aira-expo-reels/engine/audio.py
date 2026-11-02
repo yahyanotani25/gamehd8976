@@ -31,7 +31,7 @@ def beat_times(key):
 
 
 def loudness(path):
-    r = subprocess.run(['ffmpeg', '-hide_banner', '-i', path, '-af', 'loudnorm=I=-14:TP=-1.0:LRA=11:print_format=json',
+    r = subprocess.run(['ffmpeg', '-hide_banner', '-i', path, '-af', 'loudnorm=I=-14:TP=-2.0:LRA=11:print_format=json',
                         '-f', 'null', '-'], capture_output=True, text=True)
     return json.loads(r.stderr[r.stderr.rfind('{'):r.stderr.rfind('}') + 1])
 
@@ -66,9 +66,12 @@ def mix(out_wav, track, start, total, fade_in=(0.30, 0.15), music_out=None, sfx=
     subprocess.run(['ffmpeg', '-v', 'error', '-y', *inputs, '-filter_complex', ';'.join(flt), '-map', '[pre]',
                     '-c:a', 'pcm_s24le', tmp], check=True)
     m = loudness(tmp)
-    ln = (f"loudnorm=I=-14:TP=-1.0:LRA=11:measured_I={m['input_i']}:measured_TP={m['input_tp']}:"
+    ln = (f"loudnorm=I=-14:TP=-2.0:LRA=11:measured_I={m['input_i']}:measured_TP={m['input_tp']}:"
           f"measured_LRA={m['input_lra']}:measured_thresh={m['input_thresh']}:offset={m['target_offset']}:linear=true")
-    subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', tmp, '-af', ln + ',aresample=48000', '-c:a', 'pcm_s24le',
+    # loudnorm can fall back to dynamic mode and still overshoot; a 4x-oversampled peak
+    # limiter at -3 dBFS keeps the true peak under -1 dBTP after AAC encoding
+    lim = 'aresample=192000,alimiter=limit=0.708:attack=3:release=60:level=disabled,aresample=48000'
+    subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', tmp, '-af', ln + ',' + lim, '-c:a', 'pcm_s24le',
                     out_wav], check=True)
     os.remove(tmp)
     return out_wav
