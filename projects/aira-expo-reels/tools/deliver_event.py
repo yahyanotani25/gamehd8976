@@ -3,7 +3,7 @@ look from the reel itself), caption, delivery tracker and music licence log.
 
 usage: python3 tools/deliver_event.py --event 1
 """
-import argparse, csv, json, os, shutil, subprocess, sys
+import argparse, collections, csv, json, os, shutil, subprocess, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, 'reels'))
@@ -70,7 +70,7 @@ def main():
     dst = os.path.join(ROOT, 'final', b['folder'])
     os.makedirs(dst, exist_ok=True)
     plans = E.plan_all(ev)
-    tracker, lic, cover_clips = [], [], set()
+    tracker, lic, cover_clips, cover_who = [], [], set(), collections.Counter()
     for p in plans:
         r = p['reel']
         src = os.path.join(E.OUT, f"AIRA_{ev['name']}_R{r:02d}.mp4")
@@ -82,9 +82,15 @@ def main():
         # 15 covers show different people (else any look, else the first people shot)
         shots = [s for s in p['shots']]
         looks_i = [i for i, s in enumerate(shots) if s.get('opt', {}).get('look')]
-        fresh = [i for i in looks_i if shots[i]['clip'] not in cover_clips]
-        k = (fresh or looks_i or [next(i for i, s in enumerate(shots) if s['cat'] == 'people')])[0]
+        if any(shots[i]['opt'].get('who') for i in looks_i):
+            # guests are tagged (`who`): rotate covers between people, then between clips
+            k = min(looks_i, key=lambda i: (cover_who[shots[i]['opt'].get('who')],
+                                            shots[i]['clip'] in cover_clips, i))
+        else:
+            fresh = [i for i in looks_i if shots[i]['clip'] not in cover_clips]
+            k = (fresh or looks_i or [next(i for i, s in enumerate(shots) if s['cat'] == 'people')])[0]
         cover_clips.add(shots[k]['clip'])
+        cover_who[shots[k]['opt'].get('who')] += 1
         tc = (cuts[k] + cuts[k + 1]) / 2
         subprocess.run(['ffmpeg', '-v', 'error', '-y', '-ss', f'{tc:.3f}', '-i', mp4, '-frames:v', '1', '-q:v', '2',
                         os.path.join(dst, base + '_thumbnail.jpg')], check=True)

@@ -12,14 +12,21 @@ Options:
   pan         (cx0, cx1) horizontal move across the shot (a word wider than the 9:16 crop)
   hold        no push-in or drift (a word that only just fits the crop)
   look        a complete outfit is clearly visible (SOP: at least 2 per reel)
+  who         the guest in the shot, so the 15 covers rotate between different people
 
-Moments picked from timestamped contact sheets of every clip. Left out on purpose:
-third-party branding (the AVIORA sign at the top of the stairs S2_C2222, the perfume-brand
-shelves in DJ_0141 and the bottled-food shelf at the end of DJ_0080, a parked car at the
-end of S2_C2201, a designer crossbody bag (DJ_0114) and a monogram-print bag (DJ_0115) carried
-by guests, a camera-brand microphone (DJ_0201 after ~19 s), the AVIORA sign over the night store front S2_C2233, a monogram-print bag DJ_0087, a designer handbag DJ_0130), clips under a
-second (DJ_0204, DJ_0205, DJ_0207), street shots full of other shops' signs (S2_C2203), an
-overexposed logo wall (S2_C2214), the camera swinging off the wall in DJ_0150, passers-by blocking the lens, blurred camera moves.
+Moments picked from timestamped contact sheets of every clip, then checked in previews
+and full-resolution frames. Left out on purpose:
+  * third-party brands: guests' designer bags (crossbody DJ_0114, monogram print DJ_0115,
+    logo box bag S2_C2280, monogram-print bag DJ_0087, handbag DJ_0130), a camera-brand
+    microphone (DJ_0201 after ~19 s), the perfume-brand shelves (DJ_0141), the bottled-food
+    shelf at the end of DJ_0080, the AVIORA sign at the top of the stairs (S2_C2222) and
+    over the night store front (S2_C2233), other shops' street signs (S2_C2203), a parked
+    car at the end of S2_C2201
+  * logo words wider than the 9:16 crop at the drop (the story wall DJ_0028, the red sign
+    S2_C2309), an overexposed logo wall (S2_C2214), end-wall moments where a letter of AIRA
+    leaves the frame, the camera swinging off the wall (DJ_0150)
+  * clips under a second (DJ_0204, DJ_0205, DJ_0207), passers-by blocking the lens,
+    blurred camera moves, guests walking out of frame
 A clip whose footage is not on disk is skipped by the planner (see available()).
 """
 import os
@@ -39,10 +46,12 @@ HALL = [  # coming in: the welcome board, the flower-lined staircase, into the s
 
 LOGO = [  # the AIRA name: the story wall, the logo above the door, the lit logo wall, the red sign
     # word positions measured on tick-marked frames (fractions of the frame width)
-    ('DJ_0028', 0.3, dict(pan=(0.36, 0.66))), ('DJ_0029', 3.0, dict(cx=0.53)), ('DJ_0029', 6.5, dict(cx=0.5)),
+    ('DJ_0029', 4.8, dict(cx=0.515)), ('DJ_0029', 3.0, dict(cx=0.53)), ('DJ_0029', 6.5, dict(cx=0.5)),
     ('DJ_0030', 0.5, dict(cx=0.485, hold=1)), ('DJ_0030', 4.0, dict(cx=0.485, hold=1)),
     ('DJ_0040', 0.5, dict(cx=0.51, hold=1)), ('DJ_0040', 3.0, dict(cx=0.525, hold=1)),
-    ('DJ_0041', 1.5, {}), ('S2_C2309', 18.0, dict(pan=(0.36, 0.76))),
+    ('DJ_0041', 1.5, {}), ('DJ_0030', 3.0, dict(cx=0.49, hold=1)),
+    # (the story wall DJ_0028 and the red sign S2_C2309 are wider than the 9:16 crop: a pan
+    # shows only part of the word at the drop, so they are not used)
 ]
 
 SHOP = [  # the store: gold shelves, the rails, guests browsing
@@ -55,21 +64,25 @@ END = [  # the lit AIRA wall, whole word inside the 9:16 frame for the whole sho
     ('DJ_0165', 26.8, {}), ('DJ_0165', 27.4, {}), ('DJ_0165', 28.0, {}), ('DJ_0041', 1.9, {}),
 ]
 
-PEOPLE = [  # guests and hosts in the store
-    ('DJ_0074', 0.5, dict(look=1)), ('DJ_0074', 5.5, dict(look=1)), ('DJ_0074', 28.5, {}),
-    ('DJ_0075', 0.5, dict(look=1)), ('DJ_0075', 19.0, dict(look=1)), ('DJ_0075', 114.0, dict(look=1)),
-    ('DJ_0075', 95.0, {}),
-    ('DJ_0123', 4.5, {}),
-    ('DJ_0124', 0.3, dict(look=1)), ('DJ_0124', 7.0, dict(look=1)), ('DJ_0124', 13.0, {}),
-    ('DJ_0132', 0.5, dict(look=1)), ('DJ_0132', 2.5, dict(look=1)), ('DJ_0132', 6.5, dict(look=1)),
-    ('DJ_0139', 0.5, {}), ('DJ_0139', 1.8, {}),
-    ('DJ_0145', 11.0, {}), ('DJ_0052', 15.4, dict(cx=0.6)),
-    ('DJ_0154', 2.5, {}), ('DJ_0154', 17.9, {}),
-    ('DJ_0169', 0.5, dict(look=1)), ('DJ_0169', 10.0, dict(look=1)), ('DJ_0169', 25.0, dict(look=1)),
-    ('DJ_0194', 9.0, {}),
-    ('DJ_0201', 0.3, dict(look=1)), ('DJ_0201', 6.0, dict(look=1)),
-    ('S2_C2228', 0.5, {}), ('S2_C2280', 0.0, dict(look=1, sp=0.75)),
-    ('S2_C2378', 2.5, dict(look=1)), ('S2_C2378', 6.0, {}),
+PEOPLE = [  # guests and hosts in the store; who = the person, so covers rotate between guests
+    ('DJ_0074', 0.5, dict(look=1, who='kaftan')), ('DJ_0074', 5.5, dict(look=1, who='kaftan')),
+    ('DJ_0074', 28.5, dict(who='kaftan')),
+    ('DJ_0075', 0.5, dict(look=1, who='kaftan')), ('DJ_0075', 19.0, dict(look=1, who='kaftan')),
+    ('DJ_0075', 114.0, dict(look=1, who='kaftan')), ('DJ_0075', 95.0, dict(who='kaftan')),
+    ('DJ_0123', 4.5, dict(who='group')),
+    ('DJ_0124', 0.3, dict(look=1, who='red')), ('DJ_0124', 7.0, dict(look=1, who='red')),
+    ('DJ_0124', 13.0, dict(who='red')),
+    ('DJ_0132', 0.5, dict(look=1, who='red')), ('DJ_0132', 2.5, dict(look=1, who='red')),
+    ('DJ_0132', 6.5, dict(look=1, who='red')),
+    ('DJ_0139', 0.5, dict(who='print')), ('DJ_0139', 1.8, dict(who='print')),
+    ('DJ_0145', 11.0, dict(who='man')), ('DJ_0052', 15.4, dict(cx=0.6, who='couple')),
+    ('DJ_0154', 2.5, dict(cx=0.5, who='baby')), ('DJ_0154', 17.9, dict(who='baby')),
+    ('DJ_0169', 0.5, dict(look=1, who='wall')), ('DJ_0169', 25.0, dict(look=1, who='wall')),
+    ('DJ_0194', 9.0, dict(who='baby')),
+    ('DJ_0201', 0.3, dict(look=1, who='redhair')), ('DJ_0201', 6.0, dict(look=1, who='redhair')),
+    # wide Sony shots: framed by hand where face detection picked the wrong spot
+    ('S2_C2228', 1.8, dict(cx=0.66, who='baby')),
+    ('S2_C2378', 2.5, dict(cx=0.5, look=1, who='redhair')), ('S2_C2378', 6.0, dict(cx=0.5, who='redhair')),
 ]
 
 PRODUCT = [  # garments on the rails: prints, embroidery, finishing details
