@@ -227,8 +227,12 @@ def build_reel(ev, plan):
         cy, z = o.get('cy', 0.5 if ev.get('frac') else 540), o.get('z', 1.0)
         wl = wall_letters(ev, s['clip'], s['t']) if s['cat'] == 'end' and not ev.get('frac') else None
         sp = o.get('sp', SPEED[s['cat']])
+        if ev.get('frac') and 'sp' not in o:  # never slower than the source frame rate allows
+            sp = max(sp, FPS / rk.source_info(s['clip'])['fps'])  # (0.5 for 60p, 1.0 for 30p)
         if 'pan' in o:
             frame = [(0, (o['pan'][0], cy, 1.05, 0)), (1, (o['pan'][1], cy, 1.05, 0))]
+        elif o.get('hold'):
+            frame = [(0, (cx, cy, z, 0)), (1, (cx, cy, z, 0))]
         else:
             mv = 'push' if s['cat'] == 'end' else rng.choice(['push', 'drift', 'drift'])
             dx = rng.choice([-1, 1]) * rng.randint(20, 50)

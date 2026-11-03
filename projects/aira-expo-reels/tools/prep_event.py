@@ -27,7 +27,7 @@ def wb_gains(frames_bgr):
     """gamma-space (r, g, b) gains from a list of 8-bit BGR frames. Strength backs off
     (from STRENGTH) while the bright areas - white walls, ceiling, lit signage - would come
     out cooler than neutral, so an overexposed wall never turns blue."""
-    acc, hi = np.zeros(3), np.zeros(3)
+    acc, hi, nh = np.zeros(3), np.zeros(3), 0
     for img in frames_bgr:
         lin = (img.astype(np.float32) / 255.0) ** 2.2
         y = lin.mean(2)
@@ -38,6 +38,8 @@ def wb_gains(frames_bgr):
         mb = y > 0.35
         if mb.sum() > 200:
             hi += [lin[..., c][mb].mean() for c in range(3)]
+            nh += 1
+    hi /= max(nh, 1)  # mean over frames: the guard compares against display white (1.0)
     b, g, r = acc
     if g <= 0:
         return [1.0, 1.0, 1.0]
@@ -53,7 +55,7 @@ def wb_gains(frames_bgr):
     y0 = 0.2126 * r + 0.7152 * g + 0.0722 * b
     y1 = 0.2126 * r * gr + 0.7152 * g + 0.0722 * b * gb
     n = y0 / y1
-    return [round((gr * n) ** (1 / 2.2), 3), round(n ** (1 / 2.2), 3), round((gb * n) ** (1 / 2.2), 3)]
+    return [round(float((gr * n) ** (1 / 2.2)), 3), round(float(n ** (1 / 2.2)), 3), round(float((gb * n) ** (1 / 2.2)), 3)]
 
 
 def wb_filter(gains):
@@ -76,6 +78,10 @@ def frames(path, every=1.0):
     raw = subprocess.run(['ffmpeg', '-v', 'error', '-i', path, '-vf', f'fps=1/{every}', '-f', 'rawvideo',
                           '-pix_fmt', 'bgr24', '-'], capture_output=True).stdout
     n = len(raw) // (w * h * 3)
+    if n == 0:  # clip shorter than `every`: take its first frame
+        raw = subprocess.run(['ffmpeg', '-v', 'error', '-i', path, '-frames:v', '1', '-f', 'rawvideo',
+                              '-pix_fmt', 'bgr24', '-'], capture_output=True).stdout
+        n = len(raw) // (w * h * 3)
     return [np.frombuffer(raw[i * w * h * 3:(i + 1) * w * h * 3], np.uint8).reshape(h, w, 3) for i in range(n)]
 
 
@@ -111,10 +117,11 @@ def main():
     for src in sorted(glob.glob(os.path.join(raw, '*.MP4'))):
         clip = os.path.splitext(os.path.basename(src))[0]
         p = os.path.join(prx, clip + '.mp4')
-        if not os.path.exists(p):
+        if not os.path.exists(p):  # written under a temporary name, so a reader never sees half a file
             subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', src, '-vf',
                             "scale='if(gt(iw,ih),640,-2)':'if(gt(iw,ih),-2,640)'", '-an', '-c:v', 'libx264',
-                            '-preset', 'veryfast', '-crf', '23', '-g', '10', p], check=True)
+                            '-preset', 'veryfast', '-crf', '23', '-g', '10', '-f', 'mp4', p + '.tmp'], check=True)
+            os.replace(p + '.tmp', p)
         info = rk.source_info(clip)
         json.dump(dict(w=info['w'], h=info['h'], fps=info['fps'], rot=info['rot']), open(p + '.src.json', 'w'))
         sp = os.path.join(sheets, clip + '.jpg')
@@ -123,6 +130,7 @@ def main():
             wb[clip] = wb_gains(fr[::max(1, len(fr) // 8)])
             cv2.imwrite(sp, sheet(fr, [f'{clip} {i}s' for i in range(len(fr))]), [cv2.IMWRITE_JPEG_QUALITY, 80])
         print(clip, f"{info['w']}x{info['h']} {info['fps']:.2f}fps", wb[clip], flush=True)
+        json.dump(wb, open(wbj, 'w'), indent=0, sort_keys=True)  # keep what is done if a later clip fails
     if wb:  # nothing on disk yet: leave no empty file behind
         json.dump(wb, open(wbj, 'w'), indent=0, sort_keys=True)
 
