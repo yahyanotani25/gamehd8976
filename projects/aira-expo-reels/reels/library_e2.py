@@ -16,9 +16,10 @@ Options:
 Moments picked from timestamped contact sheets of every clip. Left out on purpose:
 third-party branding (the AVIORA sign at the top of the stairs S2_C2222, the perfume-brand
 shelves in DJ_0141 and the bottled-food shelf at the end of DJ_0080, a parked car at the
-end of S2_C2201, the AVIORA sign over the gate in S2_C2233 (zoomed out of frame), a monogram-print bag DJ_0087, a designer handbag DJ_0130), clips under a
+end of S2_C2201, a designer crossbody bag (DJ_0114) and a monogram-print bag (DJ_0115) carried
+by guests, a camera-brand microphone (DJ_0201 after ~19 s), the AVIORA sign over the night store front S2_C2233, a monogram-print bag DJ_0087, a designer handbag DJ_0130), clips under a
 second (DJ_0204, DJ_0205, DJ_0207), street shots full of other shops' signs (S2_C2203), an
-overexposed logo wall (S2_C2214), passers-by blocking the lens, blurred camera moves.
+overexposed logo wall (S2_C2214), the camera swinging off the wall in DJ_0150, passers-by blocking the lens, blurred camera moves.
 A clip whose footage is not on disk is skipped by the planner (see available()).
 """
 import os
@@ -26,9 +27,7 @@ import os
 EXT = [  # outside: the AIRA campaign standee, the soft-launch board, the store front at night
     ('DJ_0022', 0.5, {}), ('DJ_0022', 2.8, {}), ('DJ_0022', 11.0, {}),
     ('S2_C2200', 5.0, dict(pan=(0.6, 0.85))), ('S2_C2200', 9.8, dict(pan=(0.38, 0.72))),
-    ('S2_C2201', 0.5, dict(cx=0.72)), ('S2_C2201', 4.0, dict(cx=0.76)),
-    # night store front, zoomed below the building's own sign over the gate
-    ('S2_C2233', 12.6, dict(cx=0.66, cy=0.62, z=1.3)), ('S2_C2233', 14.0, dict(cx=0.66, cy=0.62, z=1.3)),
+    ('S2_C2201', 0.5, dict(pan=(0.6, 0.84))), ('S2_C2201', 4.0, dict(pan=(0.62, 0.86))),
 ]
 
 HALL = [  # coming in: the welcome board, the flower-lined staircase, into the store
@@ -43,25 +42,23 @@ LOGO = [  # the AIRA name: the story wall, the logo above the door, the lit logo
     ('DJ_0028', 0.3, dict(pan=(0.36, 0.66))), ('DJ_0029', 3.0, dict(cx=0.53)), ('DJ_0029', 6.5, dict(cx=0.5)),
     ('DJ_0030', 0.5, dict(cx=0.485, hold=1)), ('DJ_0030', 4.0, dict(cx=0.485, hold=1)),
     ('DJ_0040', 0.5, dict(cx=0.51, hold=1)), ('DJ_0040', 3.0, dict(cx=0.525, hold=1)),
-    ('DJ_0041', 0.5, {}), ('DJ_0041', 4.0, {}), ('S2_C2309', 18.0, dict(pan=(0.36, 0.76))),
+    ('DJ_0041', 1.5, {}), ('S2_C2309', 18.0, dict(pan=(0.36, 0.76))),
 ]
 
 SHOP = [  # the store: gold shelves, the rails, guests browsing
     ('DJ_0072', 1.0, {}), ('DJ_0072', 7.5, {}), ('DJ_0112', 0.5, {}), ('DJ_0112', 3.0, {}),
-    ('DJ_0114', 1.0, {}), ('DJ_0114', 6.0, {}), ('DJ_0114', 12.0, {}),
     ('S2_C2241', 1.5, {}), ('S2_C2241', 6.0, {}), ('S2_C2284', 0.5, {}), ('S2_C2284', 4.0, {}),
     ('S2_C2300', 1.0, {}),
 ]
 
-END = [  # the lit AIRA wall with the counter and guests, whole word inside the 9:16 frame
-    ('DJ_0165', 26.8, {}), ('DJ_0165', 28.0, {}), ('DJ_0150', 0.2, {}), ('DJ_0041', 6.0, {}), ('DJ_0041', 8.0, {}),
+END = [  # the lit AIRA wall, whole word inside the 9:16 frame for the whole shot (checked frame by frame)
+    ('DJ_0165', 26.8, {}), ('DJ_0165', 27.4, {}), ('DJ_0165', 28.0, {}), ('DJ_0041', 1.9, {}),
 ]
 
 PEOPLE = [  # guests and hosts in the store
     ('DJ_0074', 0.5, dict(look=1)), ('DJ_0074', 5.5, dict(look=1)), ('DJ_0074', 28.5, {}),
     ('DJ_0075', 0.5, dict(look=1)), ('DJ_0075', 19.0, dict(look=1)), ('DJ_0075', 114.0, dict(look=1)),
     ('DJ_0075', 95.0, {}),
-    ('DJ_0115', 6.6, dict(look=1)), ('DJ_0115', 8.5, {}),
     ('DJ_0123', 4.5, {}),
     ('DJ_0124', 0.3, dict(look=1)), ('DJ_0124', 7.0, dict(look=1)), ('DJ_0124', 13.0, {}),
     ('DJ_0132', 0.5, dict(look=1)), ('DJ_0132', 2.5, dict(look=1)), ('DJ_0132', 6.5, dict(look=1)),
@@ -70,7 +67,7 @@ PEOPLE = [  # guests and hosts in the store
     ('DJ_0154', 2.5, {}), ('DJ_0154', 17.9, {}),
     ('DJ_0169', 0.5, dict(look=1)), ('DJ_0169', 10.0, dict(look=1)), ('DJ_0169', 25.0, dict(look=1)),
     ('DJ_0194', 9.0, {}),
-    ('DJ_0201', 0.3, dict(look=1)), ('DJ_0201', 6.0, dict(look=1)), ('DJ_0201', 30.0, {}),
+    ('DJ_0201', 0.3, dict(look=1)), ('DJ_0201', 6.0, dict(look=1)),
     ('S2_C2228', 0.5, {}), ('S2_C2280', 0.0, dict(look=1, sp=0.75)),
     ('S2_C2378', 2.5, dict(look=1)), ('S2_C2378', 6.0, {}),
 ]
